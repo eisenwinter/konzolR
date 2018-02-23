@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sbkst.konzolR.Demo", "sbkst.konzolR.Demo\sbkst.konzolR.Demo.csproj", "{DB019DB1-F274-43CE-809F-76C64FA264C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sbkst.konzolR", "sbkst.konzolR\sbkst.konzolR.csproj", "{7F086443-C9C1-4A98-8322-CEBE69C12173}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB019DB1-F274-43CE-809F-76C64FA264C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB019DB1-F274-43CE-809F-76C64FA264C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB019DB1-F274-43CE-809F-76C64FA264C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB019DB1-F274-43CE-809F-76C64FA264C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F086443-C9C1-4A98-8322-CEBE69C12173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F086443-C9C1-4A98-8322-CEBE69C12173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F086443-C9C1-4A98-8322-CEBE69C12173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F086443-C9C1-4A98-8322-CEBE69C12173}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40D352AB-404B-4651-85FA-8AFD2D321526}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ProjectGuid>{7F086443-C9C1-4A98-8322-CEBE69C12173}</ProjectGuid>
+    <TargetFramework>net452</TargetFramework>
+    <Version>0.1.0</Version>
+    <Authors>Jan Caspar</Authors>
+    <Company />
+    <Product>konzolR</Product>
+    <Description>C# Console Utility Microlibrary
+Boost your C# Console Applications with a few simple extensions and components.
+For more information check out the project site!</Description>
+    <PackageLicenseUrl>https://github.com/eisenwinter/konzolR/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/eisenwinter/konzolR</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/eisenwinter/konzolR</RepositoryUrl>
+    <RepositoryType />
+    <PackageTags>C#  Console Arguments ConsoleArguments ConsoleArgumenterBinder ArgumentBinder TitleScreen Loadingbar WaitingBar ConsoleDialogs Dialogs ConsoleExtensions</PackageTags>
+    <PackageReleaseNotes>initial release</PackageReleaseNotes>
+    <Copyright>subkonstrukt.at</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+</Project>
