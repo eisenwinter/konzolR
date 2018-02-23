@@ -1,8 +1,8 @@
-> WIP - currently preparing nugget package
-
-# konzolR
+# konzolR 
 C# Console Utility Microlibrary
 
+[![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg?style=for-the-badge)]()
+[![NuGet](https://img.shields.io/badge/NUGET-v0.1.0-blue.svg?style=for-the-badge)](https://www.nuget.org/packages/sbkst.konzolR/)
 ## About
 konzolR is a Micro Library for C# Console Applications
 
