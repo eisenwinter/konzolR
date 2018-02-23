@@ -15,6 +15,7 @@ namespace sbkst.konzolR.Demo
         {
 
 
+
             //title screen demo
             using (var title = TitleHelper.CreateTitlescreenFor("Superawsome Application!"))
             {
@@ -123,7 +124,6 @@ namespace sbkst.konzolR.Demo
                 {
                     bar.SetPercentage(i);
                     System.Threading.Thread.Sleep(50);
-                    Console.WriteLine("Yes ello there!");
                 }
                 bar.Done();
             }
