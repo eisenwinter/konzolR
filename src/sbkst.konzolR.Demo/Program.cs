@@ -127,8 +127,7 @@ namespace sbkst.konzolR.Demo
                 }
                 bar.Done();
             }
-
-
+  
 
         }
     }

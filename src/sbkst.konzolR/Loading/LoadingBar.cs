@@ -14,7 +14,6 @@ namespace sbkst.konzolR.Loading
         private int startedLeft = 0;
         private int startedTop = 0;
 
-        private static char[] _onOffValues = new char[] { '▒', '█' };
         private const int _titleLength = 10;
 
         public enum BarType { LoadingPercentage, Waiting }
@@ -62,7 +61,7 @@ namespace sbkst.konzolR.Loading
                 int barLength = Console.BufferWidth;
                 if (barLength <= 0) barLength = 1;
                 int currently = (int)Math.Floor((_current * (decimal)0.01) * barLength);
-                string bar = String.Format("{0}{1}", new String(_onOffValues[1], currently), new String(_onOffValues[0], barLength - currently));
+                string bar = String.Format("{0}{1}", new String(AsciiArtIndex.BAR_FILLED, currently), new String(AsciiArtIndex.BAR_EMPTY, barLength - currently));
                 int restetLeft = Console.CursorLeft;
                 int resetTop = Console.CursorTop;
                 Console.SetCursorPosition(startedLeft, startedTop);
@@ -73,7 +72,7 @@ namespace sbkst.konzolR.Loading
             {
                 //if we are in output redirection we show the bar on the title
                 int titleLength = (int)Math.Floor(_current * (decimal)0.01 * _titleLength);
-                Console.Title = String.Format("{0}{1}", new String(_onOffValues[1], titleLength), new String(_onOffValues[0], _titleLength - titleLength));
+                Console.Title = String.Format("{0}{1}", new String(AsciiArtIndex.BAR_FILLED, titleLength), new String(AsciiArtIndex.BAR_EMPTY, _titleLength - titleLength));
             }
         }
 

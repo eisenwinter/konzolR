@@ -10,12 +10,7 @@ namespace sbkst.konzolR.TitleScreen
     {
         private string _applicationName;
 
-        private const char _top_left_corner = '╔';
-        private const char _top_right_corner = '╗';
-        private const char _bottom_right_corner = '╝';
-        private const char _bottom_left_corner = '╚';
-        private const char _vertical = '║';
-        private const char _horizontal = '═';
+
 
         private int _messagePos = 0;
      
@@ -31,11 +26,11 @@ namespace sbkst.konzolR.TitleScreen
             if(len < 0)
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append(new String(_horizontal, Console.BufferWidth-1));
+                sb.Append(new String(AsciiArtIndex.BOX_HORIZONTAL, Console.BufferWidth-1));
                 sb.AppendLine();
                 sb.Append(_applicationName);
                 sb.AppendLine();
-                sb.Append(new String(_horizontal, Console.BufferWidth - 1));
+                sb.Append(new String(AsciiArtIndex.BOX_HORIZONTAL, Console.BufferWidth - 1));
                 Console.Write(sb);
             }
             else
@@ -43,17 +38,17 @@ namespace sbkst.konzolR.TitleScreen
                 int marginLeft = (int)Math.Floor(len * 0.5);
                 StringBuilder sb = new StringBuilder();
                 sb.Append(new String(' ', marginLeft));
-                sb.Append(_top_left_corner);
-                sb.Append(new String(_horizontal, _applicationName.Length + 2));
-                sb.Append(_top_right_corner);
+                sb.Append(AsciiArtIndex.BOX_TOP_LEFT_CORNER);
+                sb.Append(new String(AsciiArtIndex.BOX_HORIZONTAL, _applicationName.Length + 2));
+                sb.Append(AsciiArtIndex.BOX_TOP_RIGHT_CORNER);
                 sb.AppendLine();
                 sb.Append(new String(' ', marginLeft));
-                sb.Append(_vertical + " " + _applicationName.PadRight(_applicationName.Length + 1) + _vertical);
+                sb.Append(AsciiArtIndex.BOX_VERTICAL + " " + _applicationName.PadRight(_applicationName.Length + 1) + AsciiArtIndex.BOX_VERTICAL);
                 sb.AppendLine();
                 sb.Append(new String(' ', marginLeft));
-                sb.Append(_bottom_left_corner);
-                sb.Append(new String(_horizontal, _applicationName.Length + 2));
-                sb.Append(_bottom_right_corner);
+                sb.Append(AsciiArtIndex.BOX_BOTTOM_LEFT_CORNER);
+                sb.Append(new String(AsciiArtIndex.BOX_HORIZONTAL, _applicationName.Length + 2));
+                sb.Append(AsciiArtIndex.BOX_BOTTOM_RIGHT_CORNER);
                 Console.Write(sb);
                 Console.WriteLine();
             }

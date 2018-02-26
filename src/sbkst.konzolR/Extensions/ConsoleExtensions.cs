@@ -15,7 +15,7 @@ namespace sbkst.konzolR.Extensions
         /// <param name="text"></param>
         public static void WriteLnLog(string text)
         {
-            Console.WriteLine(String.Format("[{0} {1}] {2}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(),text));
+            Console.WriteLine(String.Format("[{0} {1}] {2}", DateTime.Now.ToShortDateString(), DateTime.Now.ToShortTimeString(), text));
         }
 
         /// <summary>
@@ -37,6 +37,13 @@ namespace sbkst.konzolR.Extensions
             Console.ForegroundColor = ConsoleColor.Black;
         }
 
+
+        public static void TopMost()
+        {
+            IntPtr mainHandle = System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle;
+            Internals.ConsoleInteropt.SetWindowPos(mainHandle, new IntPtr(-1), 0, 0, 0, 0, 0x0002 | 0x0001);
+        }
+
         /// <summary>
         /// reads multiline input, finish with escape
         /// </summary>
@@ -47,7 +54,7 @@ namespace sbkst.konzolR.Extensions
             var key = Console.ReadKey();
             while (key.Key != ConsoleKey.Escape)
             {
-                if(key.Key == ConsoleKey.Enter)
+                if (key.Key == ConsoleKey.Enter)
                 {
                     Console.CursorTop += 1;
                     sb.Append(Environment.NewLine);
