@@ -169,10 +169,67 @@ using (var title = TitleHelper.CreateTitlescreenFor("Superawsome Application!"))
 }
 ```
 
+**Screenshot of the example**
+![Screenshot](assets/screenshot-titlescreen-loadingbar.png)
+
 
 ### ⚙ Console Extensions
 It also ships with a handfull of convenience utility functions, please refer to the documentation section below
 
 ## Documentation
 
-> WIP
+### Argument Binder
+
+Namespace `sbkst.konzolR.Arguments`
+
+The static method `ArgumentBinder.Create<T>` creates a new Argument Binder Setup, where one can define how the 
+arguments are going to be bound on the supplied model T.
+
+The Argument Setup supports `CreateFor` which creates a binding for boolean value, `CreateArgumentWithPayloadFor`
+which supports binding against a boolean and a second string value which gets validated trough the supplied regex.
+`CreatePathArgumentFor` binds against a boolean value and a string value, where the string value gets stripped of 
+leading and trailing `"` if supplied.  `CreateArrayArgumentFor` binds to a boolean value and a string array,
+the seperator for the second argument can be supplied, the default value is `,`. The `Build` Method creates the
+final binder. The binder itself has a `Bind` method which tries to bind the supplied argument array to the defined 
+model and a `help` method which displays a simple help.
+
+### Dialog
+
+Namespace `sbkst.konzolR.SimpleDialog`
+
+A new dialog gets created with the static method `DialogHelper.Create<T>`, which takes the introduction text 
+to the dialog as first argument, the dialog itself can then be composed with the `Ask` and `AskOptional` Methods.
+The difference between `Ask` and `AskOptional` is that the user can skip optional ones and has to set a valid value
+for the ask ones, also optional is bound against nullable types. `.Run` exectues the dialog and returns the given
+answers as the object defined.
+
+### Loading Bar & Waiting Bar
+
+Namespace `sbkst.konzolR.Loading`
+
+A new loading or waiting bar can be created with the static method `LoadingHelper.GetLoadingBar()` or `GetWaitingBar`. 
+The difference between those two is, that the loading bar supports setting a fixed percentage, with the `SetPercentage()` method, (a.e.  classic progress bar)
+while the waiting bar just supports `Start` and `Done` and will in between those two calls just keep filling itself up. 
+Its used for unknown durations or progress.
+
+### Title Screen
+
+Namespace `sbkst.konzolR.TitleScreen`
+
+Create a new `ITitleScreen` with the static method `TitleHelper.CreateTitlescreenFor`. The title screen object itself supports
+`Show` which will display the title screen, `ChangeText` which will update the message below the title screen to the supplied text
+and `Close` which will clear the the title screen.
+
+### The Extensions
+
+Namespace `sbkst.konzolR.Extensions`
+
+`ConsoleExtensions.WriteLnLog(string text)` outputs text directly to the console with leading date and time
+`ConsoleExtensions.WhiteOnBlack()` sets black background and white text
+`ConsoleExtensions.BlackOnWhite()` sets white background and black text
+`ConsoleExtensions.ReadMultiline()` will read console input until the `ESC` key is pressed
+
+`TableizeToConsole` extends the ICollection interface and will try to print the given collection to the console 
+as an ascii art table. it accepts a argument list of fields to set the columns. 
+*warning* this wont do the prettiest output possible, but is fine for debugging and internal purposes,
+or if you dont care if some table headers have ugly names
