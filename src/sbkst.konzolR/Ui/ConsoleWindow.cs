@@ -5,19 +5,44 @@ using System.Text;
 using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Rendering;
 using sbkst.konzolR.Ui.Layout;
+using sbkst.konzolR.Ui.Behavior;
 namespace sbkst.konzolR.Ui
 {
     public enum ConsoleWindowBackgroundColor { Red, Green, Blue }
-    public class ConsoleWindow  : IRenderable
+    public class ConsoleWindow  : IRenderable, IObserve<WindowFocusChange>
     {
         private int _zindex = 0;
         private string _title;
         private string _id;
-
-        private bool _hidden;
-
-        private Size size;
+        private Size _size;
         ConsoleColor _color = ConsoleColor.Red;
+
+        private Boolean _focused;
+        public Boolean HasFocus
+        {
+            get
+            {
+                return _focused;
+            }
+            private set
+            {
+                bool redraw = _focused != value;
+                _focused = value;
+                if (redraw)
+                {
+                    if (_focused)
+                    {
+                        Zindex += 100;
+                    }
+                    else
+                    {
+                        Zindex -= 100;
+                    }
+                }
+            }
+        }
+
+
 
         public delegate void RequestRedraw(ConsoleWindow window);
         public event RequestRedraw OnRequestRedraw;
@@ -72,8 +97,8 @@ namespace sbkst.konzolR.Ui
 
         public Size Size
         {
-            get { return size; }
-            set { size = value; }
+            get { return _size; }
+            set { _size = value; }
         }
 
         private Position position;
@@ -91,7 +116,7 @@ namespace sbkst.konzolR.Ui
         {
             _title = title;
             _id = id;
-            this.size = size;
+            this._size = size;
             this.position = pos;
         }
 
@@ -103,6 +128,10 @@ namespace sbkst.konzolR.Ui
 
         public void AddControl(Controls.ConsoleControl control)
         {
+            control.Size.Height = 1;
+            control.Size.Width = this.Size.Width;
+            control.Position.X = 0;
+            control.Position.Y = (ushort)(2 + _controls.Count);
             _controls.Add(control.Id,control);
             OnRequestRedraw?.Invoke(this);
         }
@@ -110,6 +139,18 @@ namespace sbkst.konzolR.Ui
         public Controls.ConsoleControl GetControl(string id)
         {
             return _controls[id];
+        }
+
+        public void PerformLayout()
+        {
+            int idx = 0;
+            foreach(var control in _controls)
+            {
+                //basic auto-masonry vertical
+                control.Value.Position.X = 0;
+                control.Value.Position.Y = (ushort)(2 + idx);
+                idx++;
+            }
         }
 
         private IRenderProvider _renderProvider = null;
@@ -121,6 +162,11 @@ namespace sbkst.konzolR.Ui
                 _renderProvider = new ConsoleWindowRenderEngine(this);
             }
             return _renderProvider;
+        }
+
+        public void Update(WindowFocusChange input)
+        {
+            this.HasFocus = input.Id == this.Id;
         }
     }
 }

@@ -32,6 +32,19 @@ namespace sbkst.konzolR.Ui
 
         private Dictionary<string,ConsoleWindow> _windows = new Dictionary<string, ConsoleWindow>();
 
+        public IEnumerable<ConsoleWindow> Windows
+        {
+            get
+            {
+                if (_windows == null)
+                    yield return null;
+                foreach(var w in _windows.Select(s => s.Value))
+                {
+                    yield return w;
+                }
+            }
+        }
+
         public ConsoleWindow this[string s]
         {
             get
@@ -74,7 +87,7 @@ namespace sbkst.konzolR.Ui
         {
             var win = _windows.Select(s=>s.Value)
                 .OrderByDescending(c => c.Zindex)
-                .FirstOrDefault(a => a.Position.X <= x && a.Position.Y <= y && (a.Position.X + a.Size.Width) > x && (a.Position.Y + a.Size.Height) > y);
+                .FirstOrDefault(BoundingBoxFilter.Filter(x,y));
             if (win != null)
             {
                 var provider = win.GetProvider();

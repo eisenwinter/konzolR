@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using sbkst.konzolR.Ui.Rendering;
 
 namespace sbkst.konzolR.Ui.Controls
 {
@@ -13,8 +14,6 @@ namespace sbkst.konzolR.Ui.Controls
 
         }
 
-
-
         private string _value = string.Empty;
         public string Value
         {
@@ -24,7 +23,6 @@ namespace sbkst.konzolR.Ui.Controls
             }
             set
             {
-                this.Valid = false;
                 _value = value;
             }
         }
@@ -33,5 +31,9 @@ namespace sbkst.konzolR.Ui.Controls
             _value = initialText;
         }
 
+        public override IRenderProvider GetProvider()
+        {
+            return new ControlRenderEngine(this, _value);
+        }
     }
 }

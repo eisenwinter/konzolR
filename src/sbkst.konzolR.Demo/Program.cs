@@ -33,10 +33,15 @@ namespace sbkst.konzolR.Demo
                 Console.ReadKey();
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
                 Console.ReadKey();
+                test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                test.Focus("test-id");
+                Console.ReadKey();
+                test.Focus("overlapping-id");
+                Console.ReadKey();
                 test.RemoveWindow("overlapping-id");
                 Console.ReadKey();
-
-                
+                test.GetWindow("test-id").AddControl(new Ui.Controls.InfotextControl("infotest", "Hello there!"));
+                Console.ReadKey();
             }
   
 
