@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace sbkst.konzolR.Ui.Layout
+namespace sbkst.konzolR.Ui.Rendering
 {
-    abstract class ConsoleWindowLayout : Controls.ConsoleControl
+    public interface IRenderProvider
     {
+        Tuple<char, ushort> GetRelative(ushort x, ushort y);
     }
 }

@@ -8,6 +8,9 @@ namespace sbkst.konzolR.Ui.Controls
 {
     class ConsoleButton : ConsoleControl
     {
-     
+        public ConsoleButton(string text, string id) : base(id)
+        {
+
+        }
     }
 }

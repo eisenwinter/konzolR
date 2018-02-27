@@ -141,5 +141,7 @@ namespace sbkst.konzolR.Internals
             bool Visible;
         }
 
+
+
     }
 }

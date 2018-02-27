@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace sbkst.konzolR.Ui.Controls
 {
-    abstract class ConsoleControl
+    public abstract class ConsoleControl
     {
-        public virtual Boolean IsReadonly { get; protected set; }
+        protected ConsoleControl(string id)
+        {
+            this.Id = id;
+        }
+
+        public virtual bool IsReadonly { get; protected set; }
+        public virtual bool Valid { get; protected set; }
+
+        public string Id { get; private set; }
     }
 }

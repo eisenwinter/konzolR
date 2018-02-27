@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sbkst.konzolR.Ui.Controls
 {
-    class ConsoleSelectionList : ConsoleControl
-    {
-    }
+    //class ConsoleSelectionList : ConsoleControl
+    //{
+    //}
 }

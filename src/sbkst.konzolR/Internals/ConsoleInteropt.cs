@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Runtime.ConstrainedExecution;
 namespace sbkst.konzolR.Internals
 {
     /// <summary>
@@ -286,6 +288,28 @@ namespace sbkst.konzolR.Internals
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, int uFlags);
+
+
+        /// <summary>
+        /// Detaches the calling process from its console.
+        /// https://docs.microsoft.com/en-us/windows/console/freeconsole
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool FreeConsole();
+
+        /// <summary>
+        /// https://msdn.microsoft.com/library/windows/desktop/ms724211
+        /// </summary>
+        /// <param name="hObject"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [SuppressUnmanagedCodeSecurity]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(IntPtr hObject);
+
+
 
     }
 }

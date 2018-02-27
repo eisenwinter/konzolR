@@ -13,8 +13,32 @@ namespace sbkst.konzolR.Demo
     {
         static void Main(string[] args)
         {
+            //tinkering arround with a simple console t-ui window framework (WIP)
+            //so far it prints windows regarding to their zindex
+            //the ui context houses a "canvas" wich does the actual rendering of the view port on 
+            //a seperate console screen buffer and keeps track with matrix of changes and will try to only update
+            //the canvas where needed - this is all very wip / tinkering
+            using (Ui.UiContext test = new Ui.UiContext())
+            {
+                test.Initialize(ConsoleColor.Blue);
+                Console.ReadKey();
+                test.AddWindow(new Ui.ConsoleWindow("Testwindow", "test-id", new Ui.Layout.Size(13, 5), new Ui.Layout.Position(2, 2)));
+                Console.ReadKey();
+                test.GetWindow("test-id").ChangeBackgroundColor(ConsoleColor.Yellow);
 
+                Console.ReadKey();
 
+                Console.ReadKey();
+                test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
+                Console.ReadKey();
+                test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
+                Console.ReadKey();
+                test.RemoveWindow("overlapping-id");
+                Console.ReadKey();
+
+                
+            }
+  
 
             //title screen demo
             using (var title = TitleHelper.CreateTitlescreenFor("Superawsome Application!"))
