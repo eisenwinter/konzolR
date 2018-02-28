@@ -36,26 +36,33 @@ namespace sbkst.konzolR.Ui
 
         public void ToggleMaximize(Size viewPort)
         {
-            if (!_isMaximized)
+            lock (_position)
             {
-                this._rollbackPosition = new Position(this._position);
-                this._rollbackSize = new Size(this.Size);
-                this.Size.Width = (ushort)(viewPort.Width - 2);
-                this.Size.Height = (ushort)(viewPort.Height - 2);
-                this.Position.X = 1;
-                this.Position.Y = 1;
-                OnRequestRedraw?.Invoke(this, true);
-                _isMaximized = true;
+                lock (_size)
+                {
+                    if (!_isMaximized)
+                    {
+                        this._rollbackPosition = new Position(this._position);
+                        this._rollbackSize = new Size(this.Size);
+                        this.Size.Width = (ushort)(viewPort.Width - 2);
+                        this.Size.Height = (ushort)(viewPort.Height - 2);
+                        this.Position.X = 1;
+                        this.Position.Y = 1;
+                        OnRequestRedraw?.Invoke(this, true);
+                        _isMaximized = true;
+                    }
+                    else
+                    {
+                        this._position = new Position(this._rollbackPosition);
+                        this._size = new Size(_rollbackSize);
+                        this._rollbackPosition = null;
+                        this._rollbackSize = null;
+                        _isMaximized = false;
+                        OnRequestRedraw?.Invoke(this, true);
+                    }
+                }
             }
-            else
-            {
-                this._position = new Position(this._rollbackPosition);
-                this._size = new Size(_rollbackSize);
-                this._rollbackPosition = null;
-                this._rollbackSize = null;
-                _isMaximized = false;
-                OnRequestRedraw?.Invoke(this, true);
-            }
+           
         }
 
         ConsoleColor _color = ConsoleColor.Gray;
