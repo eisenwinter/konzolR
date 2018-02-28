@@ -10,10 +10,10 @@ using sbkst.konzolR.Ui.Behavior;
 using sbkst.konzolR.Ui.Input;
 namespace sbkst.konzolR.Ui
 {
-    
-    public class ConsoleWindow : 
-                IRenderable, 
-                IObserve<WindowFocusChange>, 
+
+    public class ConsoleWindow :
+                IRenderable,
+                IObserve<WindowFocusChange>,
                 IObserve<ControlKeyReceived>,
                 IKeyListener<ConsoleWindow>
     {
@@ -34,35 +34,35 @@ namespace sbkst.konzolR.Ui
             }
         }
 
+        private bool _currentlyMaximizing = false;
         public void ToggleMaximize(Size viewPort)
         {
-            lock (_position)
+            if (!_currentlyMaximizing)
             {
-                lock (_size)
+                _currentlyMaximizing = true;
+
+                if (!_isMaximized)
                 {
-                    if (!_isMaximized)
-                    {
-                        this._rollbackPosition = new Position(this._position);
-                        this._rollbackSize = new Size(this.Size);
-                        this.Size.Width = (ushort)(viewPort.Width - 2);
-                        this.Size.Height = (ushort)(viewPort.Height - 2);
-                        this.Position.X = 1;
-                        this.Position.Y = 1;
-                        OnRequestRedraw?.Invoke(this, true);
-                        _isMaximized = true;
-                    }
-                    else
-                    {
-                        this._position = new Position(this._rollbackPosition);
-                        this._size = new Size(_rollbackSize);
-                        this._rollbackPosition = null;
-                        this._rollbackSize = null;
-                        _isMaximized = false;
-                        OnRequestRedraw?.Invoke(this, true);
-                    }
+                    this._rollbackPosition = new Position(this._position);
+                    this._rollbackSize = new Size(this.Size);
+                    this.Size.Width = (ushort)(viewPort.Width - 2);
+                    this.Size.Height = (ushort)(viewPort.Height - 2);
+                    this.Position.X = 1;
+                    this.Position.Y = 1;
+                    OnRequestRedraw?.Invoke(this, true);
+                    _isMaximized = true;
                 }
+                else
+                {
+                    this._position = new Position(this._rollbackPosition);
+                    this._size = new Size(_rollbackSize);
+                    this._rollbackPosition = null;
+                    this._rollbackSize = null;
+                    _isMaximized = false;
+                    OnRequestRedraw?.Invoke(this, true);
+                }
+                _currentlyMaximizing = false;
             }
-           
         }
 
         ConsoleColor _color = ConsoleColor.Gray;
@@ -225,7 +225,7 @@ namespace sbkst.konzolR.Ui
             _eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this);
         }
 
-        private Lazy<KeyEventHandler<ConsoleWindow>> _eventHandlers = new Lazy<KeyEventHandler<ConsoleWindow>>(() => new KeyEventHandler<ConsoleWindow>(),true);
+        private Lazy<KeyEventHandler<ConsoleWindow>> _eventHandlers = new Lazy<KeyEventHandler<ConsoleWindow>>(() => new KeyEventHandler<ConsoleWindow>(), true);
 
         public IKeyEventHandler<ConsoleWindow> Keys
         {
