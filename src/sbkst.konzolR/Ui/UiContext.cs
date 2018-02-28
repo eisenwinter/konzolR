@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
 using sbkst.konzolR.Ui.Behavior;
-using sbkst.konzolR.Internals;
 using sbkst.konzolR.Ui.Input;
 namespace sbkst.konzolR.Ui
 {
@@ -14,38 +13,17 @@ namespace sbkst.konzolR.Ui
         IKeyListener<UiContext>,
         IDisposable
     {
-        private IntPtr _currentConsoleHandle = IntPtr.Zero;
-        private IntPtr _screenBuffer = IntPtr.Zero;
+     
 
         private ConsoleCanvas _canvas;
         private List<IObserve<WindowFocusChange>> _focusObservers = new List<IObserve<WindowFocusChange>>();
 
-        private Input.InputHandler _inputHandler;
-
-        private ConsoleInteropt.CONSOLE_CURSOR_INFO _nfo;
-
+        private InputHandler _inputHandler;
         
         public UiContext()
         {
-            _currentConsoleHandle = ConsoleInteropt.GetConsoleWindow();
-            if (_currentConsoleHandle == IntPtr.Zero)
-            {
-                throw new Exceptions.ConsoleHandleException("Couldnt retrive console handle, are you using a console application?");
-            }
-
-            _screenBuffer = ConsoleInteropt.CreateConsoleScreenBuffer(W32ConsoleConstants.GENERIC_WRITE, 0, IntPtr.Zero, W32ConsoleConstants.CONSOLE_TEXTMODE_BUFFER, IntPtr.Zero);
-            if (_screenBuffer == IntPtr.Zero)
-            {
-                throw new Exceptions.ScreenBufferException("Couldnt create screen buffer");
-            }
-            _nfo = new ConsoleInteropt.CONSOLE_CURSOR_INFO
-            {
-                Visible = false,
-                Size = 100
-            };
-            ConsoleInteropt.SetConsoleCursorInfo(_screenBuffer, ref _nfo);
-            _inputHandler = new Input.InputHandler();
-            _canvas = new ConsoleCanvas(_screenBuffer, (ushort)Console.BufferWidth, (ushort)Console.WindowHeight);
+            _inputHandler = new InputHandler();
+            _canvas = new ConsoleCanvas((ushort)Console.BufferWidth, (ushort)Console.WindowHeight);
             _inputHandler.Start();
             _inputHandler.Register(this);
 
@@ -54,7 +32,6 @@ namespace sbkst.konzolR.Ui
         public void Initialize(ConsoleColor backgroundColor)
         {
             _canvas.Initiliaze(backgroundColor);
-            ConsoleInteropt.SetConsoleActiveScreenBuffer(_screenBuffer);
         }
 
         public void AddWindow(ConsoleWindow window)
@@ -127,7 +104,7 @@ namespace sbkst.konzolR.Ui
         {
             _inputHandler.Stop();
             _inputHandler.Unregister(this);
-            ConsoleInteropt.CloseHandle(_screenBuffer);
+            _canvas.Dispose();
         }
 
         private Lazy<KeyEventHandler<UiContext>> _eventHandlers = new Lazy<KeyEventHandler<UiContext>>(() => new KeyEventHandler<UiContext>(), true);

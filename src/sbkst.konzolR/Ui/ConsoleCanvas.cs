@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Layout;
+using sbkst.konzolR.Internals;
 namespace sbkst.konzolR.Ui
 {
-    class ConsoleCanvas 
+    class ConsoleCanvas : IDisposable
     {
         struct CanvasTile
         {
@@ -76,7 +77,7 @@ namespace sbkst.konzolR.Ui
             ushort width = (ushort)(pos.X + size.Width);
             ushort height = (ushort)(pos.Y + size.Height);
             UpdateWithin(width, height, pos.X, pos.Y);
-            UpdateScreenBuffer(); 
+            UpdateScreenBuffer(_screenBuffer); 
         }
 
         /// reserved
@@ -97,6 +98,7 @@ namespace sbkst.konzolR.Ui
         }
 
         private IntPtr _screenBuffer;
+ 
         ConsoleColor _backgroundColor;
 
         private CanvasTile GenerateTileAt(ushort x, ushort y)
@@ -128,6 +130,7 @@ namespace sbkst.konzolR.Ui
         public void Initiliaze(ConsoleColor backgroundColor)
         {
             _backgroundColor = backgroundColor;
+           
 #if DEBUG
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -153,7 +156,7 @@ namespace sbkst.konzolR.Ui
                     };
                     if (tile.DwFlag != 0)
                     {
-                        Internals.ConsoleInteropt.FillConsoleOutputAttribute(_screenBuffer, tile.DwFlag, 1, coord, out uint attrwritten);
+                        ConsoleInteropt.FillConsoleOutputAttribute(_screenBuffer, tile.DwFlag, 1, coord, out uint attrwritten);
 #if DEBUG
                         ac += attrwritten;
 #endif
@@ -161,7 +164,7 @@ namespace sbkst.konzolR.Ui
 
                     if (tile.Character != ' ')
                     {
-                        Internals.ConsoleInteropt.FillConsoleOutputCharacter(_screenBuffer, tile.Character, 1, coord, out uint written);
+                        ConsoleInteropt.FillConsoleOutputCharacter(_screenBuffer, tile.Character, 1, coord, out uint written);
 #if DEBUG
                         tc += written;
 #endif
@@ -172,6 +175,7 @@ namespace sbkst.konzolR.Ui
             sw.Stop();
             System.Diagnostics.Trace.WriteLine(String.Format("Drawing to output buffer took {0} ms for {1} chars and {2} attributes", sw.ElapsedMilliseconds, tc, ac));
 #endif
+            ConsoleInteropt.SetConsoleActiveScreenBuffer(_screenBuffer);
 
         }
 
@@ -204,6 +208,7 @@ namespace sbkst.konzolR.Ui
 
         public void Redraw()
         {
+            //ToDo: create a temp screenbuffer for updates
 #if DEBUG
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -213,11 +218,10 @@ namespace sbkst.konzolR.Ui
             sw.Stop();
             System.Diagnostics.Trace.WriteLine(String.Format("Updating tiles array took {0} ms", sw.ElapsedMilliseconds));
 #endif
-            UpdateScreenBuffer();
-
+            UpdateScreenBuffer(_screenBuffer);
         }
 
-        private void UpdateScreenBuffer()
+        private void UpdateScreenBuffer(IntPtr buffer)
         {
 #if DEBUG
             var sw = new System.Diagnostics.Stopwatch();
@@ -225,18 +229,22 @@ namespace sbkst.konzolR.Ui
 #endif
             if (_invalidTiles.Any())
             {
-                while (_invalidTiles.Any())
+                //FixMe: custom stack which creates a copy for iterator 
+                //or implement redraw queue
+                var invalidCache = _invalidTiles.ToArray(); //prevent changing during update for now
+                _invalidTiles.Clear();
+                foreach (var pos in invalidCache)
                 {
-                    var pos = _invalidTiles.Pop();
                     var tile = _tiles[Index(pos.X, pos.Y)];
                     var coord = new Internals.ConsoleInteropt.COORD
                     {
                         X = (short)pos.X,
                         Y = (short)pos.Y
                     };
-                    Internals.ConsoleInteropt.FillConsoleOutputAttribute(_screenBuffer, tile.DwFlag, 1, coord, out uint attrwritten);
-                    Internals.ConsoleInteropt.FillConsoleOutputCharacter(_screenBuffer, tile.Character, 1, coord, out uint written);
+                    ConsoleInteropt.FillConsoleOutputAttribute(buffer, tile.DwFlag, 1, coord, out uint attrwritten);
+                    ConsoleInteropt.FillConsoleOutputCharacter(buffer, tile.Character, 1, coord, out uint written);
                 }
+
 
             }
 #if DEBUG
@@ -245,11 +253,27 @@ namespace sbkst.konzolR.Ui
 #endif
         }
 
-        public ConsoleCanvas(IntPtr screenBuffer, ushort width, ushort height)
+        public ConsoleCanvas(ushort width, ushort height)
         {
             _viewport = new Size(width, height);
             _tiles = new CanvasTile[(width * height)];
-            _screenBuffer = screenBuffer;
+            _screenBuffer = ConsoleInteropt.CreateConsoleScreenBuffer(W32ConsoleConstants.GENERIC_WRITE, 0, IntPtr.Zero, W32ConsoleConstants.CONSOLE_TEXTMODE_BUFFER, IntPtr.Zero);
+            if (_screenBuffer == IntPtr.Zero)
+            {
+                throw new Exceptions.ScreenBufferException("Couldnt create screen buffer");
+            }
+            HideCursor();
+
+        }
+
+        private void HideCursor()
+        {
+            ConsoleInteropt.CONSOLE_CURSOR_INFO nfo = new ConsoleInteropt.CONSOLE_CURSOR_INFO
+            {
+                Visible = false,
+                Size = 100
+            };
+            ConsoleInteropt.SetConsoleCursorInfo(_screenBuffer, ref nfo);
         }
 
         private ushort Index(ushort x, ushort y)
@@ -263,6 +287,11 @@ namespace sbkst.konzolR.Ui
             _windows.Remove(id);
             RedrawArea(window.Position, window.Size);
             return window;
+        }
+
+        public void Dispose()
+        {
+            ConsoleInteropt.CloseHandle(_screenBuffer);
         }
     }
 }
