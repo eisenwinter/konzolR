@@ -21,7 +21,44 @@ namespace sbkst.konzolR.Ui
         private string _title;
         private string _id;
         private Size _size;
-        ConsoleColor _color = ConsoleColor.Red;
+
+        private Position _rollbackPosition;
+        private Size _rollbackSize;
+
+        private bool _isMaximized = false;
+        public bool Maximized
+        {
+            get
+            {
+                return _isMaximized;
+            }
+        }
+
+        public void ToggleMaximize(Size viewPort)
+        {
+            if (!_isMaximized)
+            {
+                this._rollbackPosition = new Position(this._position);
+                this._rollbackSize = new Size(this.Size);
+                this.Size.Width = (ushort)(viewPort.Width - 2);
+                this.Size.Height = (ushort)(viewPort.Height - 2);
+                this.Position.X = 1;
+                this.Position.Y = 1;
+                OnRequestRedraw?.Invoke(this, true);
+                _isMaximized = true;
+            }
+            else
+            {
+                this._position = new Position(this._rollbackPosition);
+                this._size = new Size(_rollbackSize);
+                this._rollbackPosition = null;
+                this._rollbackSize = null;
+                _isMaximized = false;
+                OnRequestRedraw?.Invoke(this, true);
+            }
+        }
+
+        ConsoleColor _color = ConsoleColor.Gray;
 
         private Boolean _focused;
         public Boolean HasFocus
@@ -47,7 +84,7 @@ namespace sbkst.konzolR.Ui
                 }
             }
         }
-        public delegate void RequestRedraw(ConsoleWindow window);
+        public delegate void RequestRedraw(ConsoleWindow window, bool fullRedraw = false);
         public event RequestRedraw OnRequestRedraw;
 
         public String Id
@@ -104,12 +141,12 @@ namespace sbkst.konzolR.Ui
             set { _size = value; }
         }
 
-        private Position position;
+        private Position _position;
 
         public Position Position
         {
-            get { return position; }
-            set { position = value; }
+            get { return _position; }
+            set { _position = value; }
         }
 
 
@@ -120,7 +157,7 @@ namespace sbkst.konzolR.Ui
             _title = title;
             _id = id;
             this._size = size;
-            this.position = pos;
+            this._position = pos;
         }
 
         public void ChangeBackgroundColor(ConsoleColor color)

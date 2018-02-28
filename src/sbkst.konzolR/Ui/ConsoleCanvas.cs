@@ -55,9 +55,17 @@ namespace sbkst.konzolR.Ui
             {
 
                 value.Zindex = _windows.Count; //before so we dont trigger the redraw yet
-                value.OnRequestRedraw += (window) =>
+                value.OnRequestRedraw += (window,full) =>
                 {
-                    RedrawArea(window.Position, window.Size);
+                    if (!full)
+                    {
+                        RedrawArea(window.Position, window.Size);
+                    }
+                    else
+                    {
+                        Redraw();
+                    }
+                   
                 };
                 _windows[s] = value;
             }
@@ -79,6 +87,14 @@ namespace sbkst.konzolR.Ui
         private Stack<Position> _invalidTiles = new Stack<Position>();
 
         private Size _viewport;
+
+        public Size ViewPort
+        {
+            get
+            {
+                return _viewport;
+            }
+        }
 
         private IntPtr _screenBuffer;
         ConsoleColor _backgroundColor;

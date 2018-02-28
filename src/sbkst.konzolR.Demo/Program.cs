@@ -49,19 +49,29 @@ namespace sbkst.konzolR.Demo
       
                 test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.N, (window) =>
+                 {
+                     test.MaximizeWindow(window.Id);
+                     return true;
+                 });
+                test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.R, (window) =>
+                {
+                    test.RestoreWindowSize(window.Id);
+                    return true;
+                });
                 test.HookInputLoop();
 
-                test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
-                Console.ReadKey();
+                //test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
+                //Console.ReadKey();
                 
-                test.Focus("test-id");
-                Console.ReadKey();
-                test.Focus("overlapping-id");
-                Console.ReadKey();
-                test.RemoveWindow("overlapping-id");
-                Console.ReadKey();
-                test.GetWindow("test-id").AddControl(new Ui.Controls.InfotextControl("infotest", "Hello there!"));
-                Console.ReadKey();
+                //test.Focus("test-id");
+                //Console.ReadKey();
+                //test.Focus("overlapping-id");
+                //Console.ReadKey();
+                //test.RemoveWindow("overlapping-id");
+                //Console.ReadKey();
+                //test.GetWindow("test-id").AddControl(new Ui.Controls.InfotextControl("infotest", "Hello there!"));
+                //Console.ReadKey();
             }
   
 

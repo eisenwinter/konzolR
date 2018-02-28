@@ -148,5 +148,21 @@ namespace sbkst.konzolR.Ui
             }
             _eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this);
         }
+
+        public void MaximizeWindow(string id)
+        {
+            if (!_canvas[id].Maximized)
+            {
+                _canvas[id].ToggleMaximize(_canvas.ViewPort);
+            }
+        }
+
+        public void RestoreWindowSize(string id)
+        {
+            if (_canvas[id].Maximized)
+            {
+                _canvas[id].ToggleMaximize(_canvas.ViewPort);
+            }
+        }
     }
 }
