@@ -8,6 +8,8 @@ namespace sbkst.konzolR.Internals
 {
     partial class ConsoleInteropt
     {
+
+#pragma warning disable 0649
         /// <summary>
         /// Defines the coordinates of a character cell in a console screen buffer. The origin of the coordinate system (0,0) is at the top, left cell of the buffer
         /// https://docs.microsoft.com/en-us/windows/console/coord-str
@@ -140,7 +142,7 @@ namespace sbkst.konzolR.Internals
             public uint Size;
             public bool Visible;
         }
-
+#pragma warning restore 0649
 
 
     }
