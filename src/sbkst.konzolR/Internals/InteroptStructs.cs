@@ -137,8 +137,8 @@ namespace sbkst.konzolR.Internals
         [StructLayout(LayoutKind.Sequential)]
         public struct CONSOLE_CURSOR_INFO
         {
-            uint Size;
-            bool Visible;
+            public uint Size;
+            public bool Visible;
         }
 
 

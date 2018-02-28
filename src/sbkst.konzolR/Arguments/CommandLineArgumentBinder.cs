@@ -10,7 +10,7 @@ namespace sbkst.konzolR.Arguments
 {
     class CommandLineArgumentBinder<T> : ICommandLineArgumentBinder<T>, IArgumentSetup<T> where T : class
     {
-        private Boolean _valid = false;
+       
         T _item;
         public CommandLineArgumentBinder()
         {

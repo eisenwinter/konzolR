@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 using sbkst.konzolR.Ui.Rendering;
 using sbkst.konzolR.Ui.Layout;
 using sbkst.konzolR.Ui.Behavior;
+using sbkst.konzolR.Ui.Input;
 namespace sbkst.konzolR.Ui
 {
     public enum ConsoleWindowBackgroundColor { Red, Green, Blue }
-    public class ConsoleWindow  : IRenderable, IObserve<WindowFocusChange>
+    public class ConsoleWindow : 
+                IRenderable, 
+                IObserve<WindowFocusChange>, 
+                IObserve<ControlKeyReceived>,
+                IKeyListener<ConsoleWindow>
     {
         private int _zindex = 0;
         private string _title;
@@ -41,9 +47,6 @@ namespace sbkst.konzolR.Ui
                 }
             }
         }
-
-
-
         public delegate void RequestRedraw(ConsoleWindow window);
         public event RequestRedraw OnRequestRedraw;
 
@@ -88,7 +91,7 @@ namespace sbkst.konzolR.Ui
         {
             get
             {
-                foreach(var c in _controls)
+                foreach (var c in _controls)
                 {
                     yield return c.Value;
                 }
@@ -110,7 +113,7 @@ namespace sbkst.konzolR.Ui
         }
 
 
-        private Dictionary<string,Controls.ConsoleControl> _controls = new Dictionary<string, Controls.ConsoleControl>();
+        private Dictionary<string, Controls.ConsoleControl> _controls = new Dictionary<string, Controls.ConsoleControl>();
 
         public ConsoleWindow(string title, string id, Size size, Position pos)
         {
@@ -132,7 +135,7 @@ namespace sbkst.konzolR.Ui
             control.Size.Width = this.Size.Width;
             control.Position.X = 0;
             control.Position.Y = (ushort)(2 + _controls.Count);
-            _controls.Add(control.Id,control);
+            _controls.Add(control.Id, control);
             OnRequestRedraw?.Invoke(this);
         }
 
@@ -144,7 +147,7 @@ namespace sbkst.konzolR.Ui
         public void PerformLayout()
         {
             int idx = 0;
-            foreach(var control in _controls)
+            foreach (var control in _controls)
             {
                 //basic auto-masonry vertical
                 control.Value.Position.X = 0;
@@ -157,7 +160,7 @@ namespace sbkst.konzolR.Ui
 
         public IRenderProvider GetProvider()
         {
-            if(_renderProvider == null)
+            if (_renderProvider == null)
             {
                 _renderProvider = new ConsoleWindowRenderEngine(this);
             }
@@ -167,6 +170,26 @@ namespace sbkst.konzolR.Ui
         public void Update(WindowFocusChange input)
         {
             this.HasFocus = input.Id == this.Id;
+        }
+
+        public void Update(ControlKeyReceived input)
+        {
+            if (this._focused)
+            {
+                _eventHandlers.Value.Execute(input.GenerateDictionaryKey("f"), this);
+            }
+            _eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this);
+        }
+
+        private Lazy<KeyEventHandler<ConsoleWindow>> _eventHandlers = new Lazy<KeyEventHandler<ConsoleWindow>>(() => new KeyEventHandler<ConsoleWindow>(),true);
+
+        public IKeyEventHandler<ConsoleWindow> Keys
+        {
+            get
+            {
+                return _eventHandlers.Value;
+            }
+
         }
     }
 }

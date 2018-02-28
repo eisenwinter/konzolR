@@ -23,17 +23,37 @@ namespace sbkst.konzolR.Demo
                 test.Initialize(ConsoleColor.Blue);
                 Console.ReadKey();
                 test.AddWindow(new Ui.ConsoleWindow("Testwindow", "test-id", new Ui.Layout.Size(13, 5), new Ui.Layout.Position(2, 2)));
-                Console.ReadKey();
-                test.GetWindow("test-id").ChangeBackgroundColor(ConsoleColor.Yellow);
+                test.GetWindow("test-id").Keys.On(ConsoleKey.Y, (window) =>
+                {
+                    window.ChangeBackgroundColor(ConsoleColor.Yellow);
+                    return true;
+                });
+                test.GetWindow("test-id").Keys.On(ConsoleKey.R, (window) =>
+                {
+                    window.ChangeBackgroundColor(ConsoleColor.Red);
+                    return true;
+                });
+                test.Keys.On(ConsoleKey.Q, ConsoleModifiers.Control, (ctx) =>
+                 {
+                     ctx.UnhookInputlook();
+                     return true;
+                 });
+                test.Keys.On(ConsoleKey.Tab, (ctx) =>
+                {
+                    ctx.FocusNextWindow();
+                    return true;
+                });
 
-                Console.ReadKey();
+                test.HookInputLoop();
 
-                Console.ReadKey();
+      
                 test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
-                Console.ReadKey();
+                test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                test.HookInputLoop();
+
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
                 Console.ReadKey();
-                test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                
                 test.Focus("test-id");
                 Console.ReadKey();
                 test.Focus("overlapping-id");
