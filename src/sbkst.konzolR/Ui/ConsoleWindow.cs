@@ -10,7 +10,7 @@ using sbkst.konzolR.Ui.Behavior;
 using sbkst.konzolR.Ui.Input;
 namespace sbkst.konzolR.Ui
 {
-    public enum ConsoleWindowBackgroundColor { Red, Green, Blue }
+    
     public class ConsoleWindow : 
                 IRenderable, 
                 IObserve<WindowFocusChange>, 

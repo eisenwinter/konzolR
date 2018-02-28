@@ -8,28 +8,7 @@ namespace sbkst.konzolR.Ui.Utility
 {
     internal static class ColorConverter
     {
-        /// <summary>
-        /// convert predefined colors to constants
-        /// </summary>
-        /// <param name="color">predefined konzolr colors</param>
-        /// <returns></returns>
-        public static ushort ConvertColor(this ConsoleWindowBackgroundColor color)
-        {
-            switch (color)
-            {
-                case ConsoleWindowBackgroundColor.Blue:
-                    return Internals.W32ConsoleConstants.BACKGROUND_BLUE;
-
-                case ConsoleWindowBackgroundColor.Red:
-                    return Internals.W32ConsoleConstants.BACKGROUND_RED;
-
-                case ConsoleWindowBackgroundColor.Green:
-                    return Internals.W32ConsoleConstants.BACKGROUND_GREEN;
-                default:
-                    return 0;
-            }
-        }
-
+       
         public static ushort ColorToForegroundDWORD(this ConsoleColor color)
         {
             return (ushort)color;
