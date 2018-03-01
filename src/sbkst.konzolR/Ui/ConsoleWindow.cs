@@ -18,6 +18,19 @@ namespace sbkst.konzolR.Ui
                 IKeyListener<ConsoleWindow>
     {
         private int _zindex = 0;
+        private ushort _padding = 1;
+
+        public ushort Padding
+        {
+            get
+            {
+                return _padding;
+            }
+            set
+            {
+                _padding = value;
+            }
+        }
         private string _title;
         private string _id;
         private Size _size;
@@ -49,7 +62,6 @@ namespace sbkst.konzolR.Ui
                     this.Size.Height = (ushort)(viewPort.Height - 2);
                     this.Position.X = 1;
                     this.Position.Y = 1;
-                    OnRequestRedraw?.Invoke(this, true);
                     _isMaximized = true;
                 }
                 else
@@ -59,8 +71,9 @@ namespace sbkst.konzolR.Ui
                     this._rollbackPosition = null;
                     this._rollbackSize = null;
                     _isMaximized = false;
-                    OnRequestRedraw?.Invoke(this, true);
                 }
+                PerformLayout();
+                OnRequestRedraw?.Invoke(this, true);
                 _currentlyMaximizing = false;
             }
         }
@@ -172,13 +185,25 @@ namespace sbkst.konzolR.Ui
             _color = color;
             OnRequestRedraw?.Invoke(this);
         }
+        private void ApplyPadding(Controls.ConsoleControl control)
+        {
+            if((this.Size.Width - (Padding * 2)) > 0)
+            {
+                control.Size.Width = (ushort)(this.Size.Width - (Padding*2));
+                control.Position.X = this.Padding;
+            }
+            else //if we cant apply the padding we will just try to scale it all the way
+            {
+                control.Size.Width = this.Size.Width;
+                control.Position.X = 0;
+            }
+        }
 
         public void AddControl(Controls.ConsoleControl control)
         {
             control.Size.Height = 1;
-            control.Size.Width = this.Size.Width;
-            control.Position.X = 0;
             control.Position.Y = (ushort)(2 + _controls.Count);
+            ApplyPadding(control);
             _controls.Add(control.Id, control);
             OnRequestRedraw?.Invoke(this);
         }
@@ -194,7 +219,7 @@ namespace sbkst.konzolR.Ui
             foreach (var control in _controls)
             {
                 //basic auto-masonry vertical
-                control.Value.Position.X = 0;
+                ApplyPadding(control.Value);
                 control.Value.Position.Y = (ushort)(2 + idx);
                 idx++;
             }
@@ -214,6 +239,10 @@ namespace sbkst.konzolR.Ui
         public void Update(WindowFocusChange input)
         {
             this.HasFocus = input.Id == this.Id;
+            if(this.Controls.Any(a=> (a is Controls.IFocusableControl)))
+            {
+
+            }
         }
 
         public void Update(ControlKeyReceived input)

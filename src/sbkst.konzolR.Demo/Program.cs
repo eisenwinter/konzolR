@@ -49,6 +49,8 @@ namespace sbkst.konzolR.Demo
       
                 test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("nameTextbox", "John Doe"));
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("fromTextbox", "Nowhere"));
                 test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.N, (window) =>
                  {
                      test.MaximizeWindow(window.Id);

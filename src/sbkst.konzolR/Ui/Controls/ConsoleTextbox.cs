@@ -7,15 +7,29 @@ using sbkst.konzolR.Ui.Rendering;
 
 namespace sbkst.konzolR.Ui.Controls
 {
-    public class ConsoleTextbox : ConsoleControl
+    public class ConsoleTextbox : ConsoleControl, IFocusableControl
     {
-        public ConsoleTextbox(string id) : base(id)
-        {
+        private string _value;
 
+        public string Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                _value = value;
+            }
+        }
+
+        public ConsoleTextbox(string id, string value) : base(id)
+        {
+            _value = value;
         }
         public override IRenderProvider GetProvider()
         {
-            throw new NotImplementedException();
+            return new ControlRenderEngine(this, _value);
         }
     }
 }

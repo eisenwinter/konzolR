@@ -208,7 +208,7 @@ namespace sbkst.konzolR.Ui
 
         public void Redraw()
         {
-            //ToDo: create a temp screenbuffer for updates
+            //ToDo: create a temp screenbuffer for updates to avoid flickering on full redraws
 #if DEBUG
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();

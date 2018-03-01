@@ -13,6 +13,8 @@ namespace sbkst.konzolR.Ui.Rendering
         {
             _display = display;
         }
+
+
         public override Tuple<char, ushort> GetRelative(ushort x, ushort y)
         {
             CheckBounds(x, y);
