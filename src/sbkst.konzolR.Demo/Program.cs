@@ -21,7 +21,6 @@ namespace sbkst.konzolR.Demo
             using (Ui.UiContext test = new Ui.UiContext())
             {
                 test.Initialize(ConsoleColor.Blue);
-                Console.ReadKey();
                 test.AddWindow(new Ui.ConsoleWindow("Testwindow", "test-id", new Ui.Layout.Size(13, 5), new Ui.Layout.Position(2, 2)));
                 test.GetWindow("test-id").Keys.On(ConsoleKey.Y, (window) =>
                 {

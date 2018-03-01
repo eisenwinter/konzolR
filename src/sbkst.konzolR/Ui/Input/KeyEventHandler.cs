@@ -34,10 +34,18 @@ namespace sbkst.konzolR.Ui.Input
             Unregister(k);
         }
 
-        public void Off(ConsoleKey key, ConsoleModifiers modifier)
+        public void Off(ConsoleKey key, ConsoleModifiers? modifier)
         {
-            string k = "a-" + key.ToString() + "-" + modifier.ToString();
-            Unregister(k);
+            if (modifier.HasValue)
+            {
+                string k = "a-" + key.ToString() + "-" + modifier.ToString();
+                Unregister(k);
+            }
+            else
+            {
+                Off(key);
+            }
+           
         }
 
         public void On(ConsoleKey key, Func<T, bool> exec)
@@ -47,10 +55,17 @@ namespace sbkst.konzolR.Ui.Input
 
         }
 
-        public void On(ConsoleKey key, ConsoleModifiers modifier, Func<T, bool> exec)
+        public void On(ConsoleKey key, ConsoleModifiers? modifier, Func<T, bool> exec)
         {
-            string k = "a-" + key.ToString() + "-" + modifier.ToString();
-            Register(k, exec);
+            if (modifier.HasValue)
+            {
+                string k = "a-" + key.ToString() + "-" + modifier.ToString();
+                Register(k, exec);
+            }
+            else
+            {
+                On(key, exec);
+            }  
         }
 
         public void WithFocusOff(ConsoleKey key)
@@ -59,16 +74,32 @@ namespace sbkst.konzolR.Ui.Input
             Unregister(k);
         }
 
-        public void WithFocusOff(ConsoleKey key, ConsoleModifiers modifier)
+        public void WithFocusOff(ConsoleKey key, ConsoleModifiers? modifier)
         {
-            string k = "a-" + key.ToString() + "-" + modifier.ToString();
-            Unregister(k);
+            if (modifier.HasValue)
+            {
+                string k = "a-" + key.ToString() + "-" + modifier.ToString();
+                Unregister(k);
+            }
+            else
+            {
+                WithFocusOff(key);
+            }
+           
         }
 
-        public void WithFocusOn(ConsoleKey key, ConsoleModifiers modifier, Func<T, bool> exec)
+        public void WithFocusOn(ConsoleKey key, ConsoleModifiers? modifier, Func<T, bool> exec)
         {
-            string k = "f-" + key.ToString() + "-" + modifier.ToString();
-            Register(k, exec);
+            if (modifier.HasValue)
+            {
+                string k = "f-" + key.ToString() + "-" + modifier.Value.ToString();
+                Register(k, exec);
+            }
+            else
+            {
+                WithFocusOn(key, exec);
+            }
+            
         }
 
         public void WithFocusOn(ConsoleKey key, Func<T, bool> exec)

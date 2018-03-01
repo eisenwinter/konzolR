@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections;
 using sbkst.konzolR.Ui.Behavior;
 using sbkst.konzolR.Ui.Input;
+using sbkst.konzolR.Ui.Defaults;
 namespace sbkst.konzolR.Ui
 {
     public class UiContext :
@@ -13,8 +14,9 @@ namespace sbkst.konzolR.Ui
         IKeyListener<UiContext>,
         IDisposable
     {
-     
 
+        private IDefaultHotkeys _defaultHotkeys;
+ 
         private ConsoleCanvas _canvas;
         private List<IObserve<WindowFocusChange>> _focusObservers = new List<IObserve<WindowFocusChange>>();
        
@@ -31,8 +33,9 @@ namespace sbkst.konzolR.Ui
 
         }
 
-        public void Initialize(ConsoleColor backgroundColor)
+        public void Initialize(ConsoleColor backgroundColor, IDefaultHotkeys overrideHotkeys = null)
         {
+            _defaultHotkeys = (overrideHotkeys != null) ? overrideHotkeys : new DefaultHotkeys();
             _canvas.Initiliaze(backgroundColor);
         }
 
@@ -40,6 +43,7 @@ namespace sbkst.konzolR.Ui
         {
             _focusObservers.Add(window);
             _inputHandler.Register(window);
+            window.Hotkeys = this._defaultHotkeys;
             window.Cursor = this._cursorTracking;
             Focus(window.Id);
             _canvas[window.Id] = window;
@@ -108,6 +112,7 @@ namespace sbkst.konzolR.Ui
             _inputHandler.Stop();
             _inputHandler.Unregister(this);
             _canvas.Dispose();
+            _defaultHotkeys = null;
         }
 
         private Lazy<KeyEventHandler<UiContext>> _eventHandlers = new Lazy<KeyEventHandler<UiContext>>(() => new KeyEventHandler<UiContext>(), true);

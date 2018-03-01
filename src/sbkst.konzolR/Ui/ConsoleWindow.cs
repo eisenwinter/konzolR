@@ -9,6 +9,7 @@ using sbkst.konzolR.Ui.Layout;
 using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Behavior;
 using sbkst.konzolR.Ui.Input;
+using sbkst.konzolR.Ui.Defaults;
 namespace sbkst.konzolR.Ui
 {
 
@@ -48,6 +49,44 @@ namespace sbkst.konzolR.Ui
             }
         }
 
+        IDefaultWindowHotkeys _hotkeys;
+        public IDefaultWindowHotkeys Hotkeys
+        {
+            get
+            {
+                return _hotkeys;
+            }
+            set
+            {
+                if (_hotkeys != null)
+                {
+                    this.Keys.WithFocusOff(_hotkeys.WINDOW_NEXT_CONTROL.Key, _hotkeys.WINDOW_NEXT_CONTROL.Modifier);
+                    this.Keys.WithFocusOff(_hotkeys.WINDOW_PREVIOUS_CONTROL.Key, _hotkeys.WINDOW_PREVIOUS_CONTROL.Modifier);
+                }
+                _hotkeys = value;
+                if (value != null)
+                {
+                    this.Keys.WithFocusOn(
+                        _hotkeys.WINDOW_PREVIOUS_CONTROL.Key,
+                        _hotkeys.WINDOW_PREVIOUS_CONTROL.Modifier,
+                        (window) =>
+                    {
+                        FocusPreviousControl();
+                        return true;
+                    });
+                    this.Keys.WithFocusOn(
+                         _hotkeys.WINDOW_NEXT_CONTROL.Key,
+                         _hotkeys.WINDOW_NEXT_CONTROL.Modifier,
+                         (window) =>
+                         {
+                             FocusNextControl();
+                             return true;
+                         });
+                }
+
+            }
+        }
+
         IBehaviorObserver<CursorPositionChange> _cursor;
         public IBehaviorObserver<CursorPositionChange> Cursor
         {
@@ -58,22 +97,13 @@ namespace sbkst.konzolR.Ui
             set
             {
                 _cursor = value;
-                this.Keys.WithFocusOn(ConsoleKey.DownArrow, (window) =>
-                {
-                    FocusPreviousControl();
-                    return true;
-                });
-                this.Keys.WithFocusOn(ConsoleKey.UpArrow, (window) =>
-                {
-                    FocusNextControl();
-                    return true;
-                });
+
             }
         }
 
         private string _currentlyFocusedId = string.Empty;
 
-       
+
         private void FocusNextControl()
         {
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
@@ -86,10 +116,10 @@ namespace sbkst.konzolR.Ui
         private void FocusPreviousControl()
         {
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
-            if(ctrl != null)
+            if (ctrl != null)
             {
                 SetFocusTo(this.Controls.Next(ctrl, true));
-            } 
+            }
         }
 
         private bool _currentlyMaximizing = false;
@@ -97,7 +127,7 @@ namespace sbkst.konzolR.Ui
         {
             if (!_currentlyMaximizing)
             {
-               
+
                 _currentlyMaximizing = true;
 
                 if (!_isMaximized)
@@ -310,7 +340,7 @@ namespace sbkst.konzolR.Ui
         {
             ushort x = (ushort)(ctrl.Position.X + this.Position.X);
             ushort y = (ushort)(ctrl.Position.Y + this.Position.Y);
-            if(this.HasFocus)
+            if (this.HasFocus)
                 Cursor.RequestChange(new CursorPositionChange(x, y));
             _currentlyFocusedId = ctrl.Id;
         }
