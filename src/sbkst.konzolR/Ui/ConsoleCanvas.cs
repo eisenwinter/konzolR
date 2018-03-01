@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Layout;
 using sbkst.konzolR.Internals;
+using sbkst.konzolR.Ui.Behavior;
 namespace sbkst.konzolR.Ui
 {
-    class ConsoleCanvas : IDisposable
+    class ConsoleCanvas : IDisposable, IObserve<CursorPositionChange>
     {
         struct CanvasTile
         {
@@ -31,7 +32,7 @@ namespace sbkst.konzolR.Ui
             }
         }
 
-        private Dictionary<string,ConsoleWindow> _windows = new Dictionary<string, ConsoleWindow>();
+        private Dictionary<string, ConsoleWindow> _windows = new Dictionary<string, ConsoleWindow>();
 
         public IEnumerable<ConsoleWindow> Windows
         {
@@ -39,7 +40,7 @@ namespace sbkst.konzolR.Ui
             {
                 if (_windows == null)
                     yield return null;
-                foreach(var w in _windows.Select(s => s.Value))
+                foreach (var w in _windows.Select(s => s.Value))
                 {
                     yield return w;
                 }
@@ -56,8 +57,14 @@ namespace sbkst.konzolR.Ui
             {
 
                 value.Zindex = _windows.Count; //before so we dont trigger the redraw yet
-                value.OnRequestRedraw += (window,full) =>
+                value.OnRequestRedraw += (window, full) =>
                 {
+                    bool restoreCursor = false;
+                    if (_cursorVisible)
+                    {
+                        HideCursor();
+                        restoreCursor = true;
+                    }
                     if (!full)
                     {
                         RedrawArea(window.Position, window.Size);
@@ -66,7 +73,10 @@ namespace sbkst.konzolR.Ui
                     {
                         Redraw();
                     }
-                   
+                    if (restoreCursor)
+                    {
+                        ShowCursor();
+                    }
                 };
                 _windows[s] = value;
             }
@@ -77,7 +87,7 @@ namespace sbkst.konzolR.Ui
             ushort width = (ushort)(pos.X + size.Width);
             ushort height = (ushort)(pos.Y + size.Height);
             UpdateWithin(width, height, pos.X, pos.Y);
-            UpdateScreenBuffer(_screenBuffer); 
+            UpdateScreenBuffer(_screenBuffer);
         }
 
         /// reserved
@@ -98,18 +108,20 @@ namespace sbkst.konzolR.Ui
         }
 
         private IntPtr _screenBuffer;
- 
+
         ConsoleColor _backgroundColor;
+
+        private bool _cursorVisible = false;
 
         private CanvasTile GenerateTileAt(ushort x, ushort y)
         {
-            var win = _windows.Select(s=>s.Value)
+            var win = _windows.Select(s => s.Value)
                 .OrderByDescending(c => c.Zindex)
-                .FirstOrDefault(BoundingBoxFilter.Filter(x,y));
+                .FirstOrDefault(BoundingBoxFilter.Filter(x, y));
             if (win != null)
             {
                 var provider = win.GetProvider();
-                var relative = win.Position.RelativePositionTo(new Position(x,y));
+                var relative = win.Position.RelativePositionTo(new Position(x, y));
                 var itm = provider.GetRelative(relative.X, relative.Y);
                 return new CanvasTile
                 {
@@ -130,7 +142,7 @@ namespace sbkst.konzolR.Ui
         public void Initiliaze(ConsoleColor backgroundColor)
         {
             _backgroundColor = backgroundColor;
-           
+
 #if DEBUG
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
@@ -274,6 +286,18 @@ namespace sbkst.konzolR.Ui
                 Size = 100
             };
             ConsoleInteropt.SetConsoleCursorInfo(_screenBuffer, ref nfo);
+            _cursorVisible = false;
+        }
+
+        private void ShowCursor()
+        {
+            ConsoleInteropt.CONSOLE_CURSOR_INFO nfo = new ConsoleInteropt.CONSOLE_CURSOR_INFO
+            {
+                Visible = true,
+                Size = 100
+            };
+            ConsoleInteropt.SetConsoleCursorInfo(_screenBuffer, ref nfo);
+            _cursorVisible = true;
         }
 
         private ushort Index(ushort x, ushort y)
@@ -292,6 +316,23 @@ namespace sbkst.konzolR.Ui
         public void Dispose()
         {
             ConsoleInteropt.CloseHandle(_screenBuffer);
+        }
+
+        public void Update(CursorPositionChange input)
+        {
+            if (input.Visible)
+            {
+                ConsoleInteropt.SetConsoleCursorPosition(_screenBuffer, new ConsoleInteropt.COORD
+                {
+                    X = (short)input.X,
+                    Y = (short)input.Y
+                });
+                ShowCursor();
+            }
+            else
+            {
+                HideCursor();
+            }
         }
     }
 }

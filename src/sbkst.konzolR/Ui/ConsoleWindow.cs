@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using sbkst.konzolR.Ui.Rendering;
 using sbkst.konzolR.Ui.Layout;
+using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Behavior;
 using sbkst.konzolR.Ui.Input;
 namespace sbkst.konzolR.Ui
@@ -47,11 +48,56 @@ namespace sbkst.konzolR.Ui
             }
         }
 
+        IBehaviorObserver<CursorPositionChange> _cursor;
+        public IBehaviorObserver<CursorPositionChange> Cursor
+        {
+            get
+            {
+                return _cursor;
+            }
+            set
+            {
+                _cursor = value;
+                this.Keys.WithFocusOn(ConsoleKey.DownArrow, (window) =>
+                {
+                    FocusPreviousControl();
+                    return true;
+                });
+                this.Keys.WithFocusOn(ConsoleKey.UpArrow, (window) =>
+                {
+                    FocusNextControl();
+                    return true;
+                });
+            }
+        }
+
+        private string _currentlyFocusedId = string.Empty;
+
+       
+        private void FocusNextControl()
+        {
+            var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
+            if (ctrl != null)
+            {
+                SetFocusTo(this.Controls.Previous(ctrl, true));
+            }
+        }
+
+        private void FocusPreviousControl()
+        {
+            var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
+            if(ctrl != null)
+            {
+                SetFocusTo(this.Controls.Next(ctrl, true));
+            } 
+        }
+
         private bool _currentlyMaximizing = false;
         public void ToggleMaximize(Size viewPort)
         {
             if (!_currentlyMaximizing)
             {
+               
                 _currentlyMaximizing = true;
 
                 if (!_isMaximized)
@@ -73,6 +119,7 @@ namespace sbkst.konzolR.Ui
                     _isMaximized = false;
                 }
                 PerformLayout();
+                RefreshCursorPosition();
                 OnRequestRedraw?.Invoke(this, true);
                 _currentlyMaximizing = false;
             }
@@ -187,9 +234,9 @@ namespace sbkst.konzolR.Ui
         }
         private void ApplyPadding(Controls.ConsoleControl control)
         {
-            if((this.Size.Width - (Padding * 2)) > 0)
+            if ((this.Size.Width - (Padding * 2)) > 0)
             {
-                control.Size.Width = (ushort)(this.Size.Width - (Padding*2));
+                control.Size.Width = (ushort)(this.Size.Width - (Padding * 2));
                 control.Position.X = this.Padding;
             }
             else //if we cant apply the padding we will just try to scale it all the way
@@ -239,10 +286,33 @@ namespace sbkst.konzolR.Ui
         public void Update(WindowFocusChange input)
         {
             this.HasFocus = input.Id == this.Id;
-            if(this.Controls.Any(a=> (a is Controls.IFocusableControl)))
+            if (HasFocus && this.Cursor != null)
             {
-
+                RefreshCursorPosition();
             }
+
+        }
+
+        private void RefreshCursorPosition()
+        {
+            if (this.Controls.Any(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty)))
+            {
+                var ctrl = this.Controls.First(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
+                SetFocusTo(ctrl);
+            }
+            else
+            {
+                Cursor.RequestChange(new CursorPositionChange(0, 0, false));
+            }
+        }
+
+        private void SetFocusTo(Controls.ConsoleControl ctrl)
+        {
+            ushort x = (ushort)(ctrl.Position.X + this.Position.X);
+            ushort y = (ushort)(ctrl.Position.Y + this.Position.Y);
+            if(this.HasFocus)
+                Cursor.RequestChange(new CursorPositionChange(x, y));
+            _currentlyFocusedId = ctrl.Id;
         }
 
         public void Update(ControlKeyReceived input)

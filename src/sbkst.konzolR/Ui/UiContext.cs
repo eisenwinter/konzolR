@@ -17,13 +17,15 @@ namespace sbkst.konzolR.Ui
 
         private ConsoleCanvas _canvas;
         private List<IObserve<WindowFocusChange>> _focusObservers = new List<IObserve<WindowFocusChange>>();
-
+       
         private InputHandler _inputHandler;
-        
+        private DefaultBehaviorObserver<CursorPositionChange> _cursorTracking; 
         public UiContext()
         {
             _inputHandler = new InputHandler();
             _canvas = new ConsoleCanvas((ushort)Console.BufferWidth, (ushort)Console.WindowHeight);
+            _cursorTracking = new DefaultBehaviorObserver<CursorPositionChange>();
+            _cursorTracking.Register(_canvas);
             _inputHandler.Start();
             _inputHandler.Register(this);
 
@@ -38,6 +40,7 @@ namespace sbkst.konzolR.Ui
         {
             _focusObservers.Add(window);
             _inputHandler.Register(window);
+            window.Cursor = this._cursorTracking;
             Focus(window.Id);
             _canvas[window.Id] = window;
             _canvas.Redraw();
