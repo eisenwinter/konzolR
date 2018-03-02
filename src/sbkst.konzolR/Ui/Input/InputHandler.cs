@@ -8,14 +8,7 @@ using System.IO;
 using System.Collections.Concurrent;
 namespace sbkst.konzolR.Ui.Input
 {
-    public enum FunctionKeys
-    {
-        Tab = 9,
-        Backspace = 8,
-        Escape = 27,
-        Cr = 13,
-        LF = 10
-    }
+    
     //using the standard console wrappings for convience for now ...
     class InputHandler
     {
@@ -39,6 +32,7 @@ namespace sbkst.konzolR.Ui.Input
         {
             _receivers.Remove(observe);
         }
+
         public void Start()
         {
             _inputThread = new Thread(new ThreadStart(CheckInputBuffer));
