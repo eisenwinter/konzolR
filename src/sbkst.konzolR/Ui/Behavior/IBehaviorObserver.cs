@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace sbkst.konzolR.Ui.Behavior
 {
+    /// <summary>
+    /// defines the observing object
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public interface IBehaviorObserver<T>
     {
         void Register(IObserve<T> observer);

@@ -49,6 +49,7 @@ namespace sbkst.konzolR.Ui
             }
         }
 
+
         IDefaultWindowHotkeys _hotkeys;
         public IDefaultWindowHotkeys Hotkeys
         {
@@ -181,7 +182,7 @@ namespace sbkst.konzolR.Ui
                 }
             }
         }
-        public delegate void RequestRedraw(ConsoleWindow window, bool fullRedraw = false);
+        public delegate void RequestRedraw(IRenderable rectangle, bool fullRedraw = false);
         public event RequestRedraw OnRequestRedraw;
 
         public String Id
@@ -246,6 +247,23 @@ namespace sbkst.konzolR.Ui
             set { _position = value; }
         }
 
+        private bool HasControlListening
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(_currentlyFocusedId) && _controls[_currentlyFocusedId] is Controls.IListeningControl;
+            }
+        }
+
+        private Controls.IListeningControl GetListeningControl()
+        {
+            if (HasControlListening)
+            {
+                return _controls[_currentlyFocusedId] as Controls.IListeningControl;
+            }
+            return null;
+        }
+
 
         private Dictionary<string, Controls.ConsoleControl> _controls = new Dictionary<string, Controls.ConsoleControl>();
 
@@ -262,6 +280,7 @@ namespace sbkst.konzolR.Ui
             _color = color;
             OnRequestRedraw?.Invoke(this);
         }
+
         private void ApplyPadding(Controls.ConsoleControl control)
         {
             if ((this.Size.Width - (Padding * 2)) > 0)
@@ -340,18 +359,42 @@ namespace sbkst.konzolR.Ui
         {
             ushort x = (ushort)(ctrl.Position.X + this.Position.X);
             ushort y = (ushort)(ctrl.Position.Y + this.Position.Y);
-            if (this.HasFocus)
+            if (this.HasFocus) { 
                 Cursor.RequestChange(new CursorPositionChange(x, y));
+            }
+            if (!String.IsNullOrEmpty(_currentlyFocusedId))
+            {
+                (_controls[_currentlyFocusedId] as Controls.IFocusableControl).Blur();
+            }
+             (ctrl as Controls.IFocusableControl).Focus();
             _currentlyFocusedId = ctrl.Id;
+           
         }
 
         public void Update(ControlKeyReceived input)
         {
+            bool isSuccessfullyExecuted = false;
             if (this._focused)
             {
-                _eventHandlers.Value.Execute(input.GenerateDictionaryKey("f"), this);
+                if(_eventHandlers.Value.Execute(input.GenerateDictionaryKey("f"), this))
+                {
+                    isSuccessfullyExecuted = true;
+                }
             }
-            _eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this);
+            if(_eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this))
+            {
+                isSuccessfullyExecuted = true;
+            }
+            if (!isSuccessfullyExecuted && _focused && HasControlListening)
+            {
+                var ctrl = GetListeningControl();
+                //if (ctrl.KeyReceived(input))
+                //{
+                //    //ToDo: correct redraw
+                //    //FixMe: relative position to absolute
+                //    OnRequestRedraw?.Invoke(ctrl as Controls.ConsoleControl);
+                //}
+            }
         }
 
         private Lazy<KeyEventHandler<ConsoleWindow>> _eventHandlers = new Lazy<KeyEventHandler<ConsoleWindow>>(() => new KeyEventHandler<ConsoleWindow>(), true);

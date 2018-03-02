@@ -7,7 +7,7 @@ using sbkst.konzolR.Ui.Rendering;
 
 namespace sbkst.konzolR.Ui.Controls
 {
-    public class ConsoleTextbox : ConsoleControl, IFocusableControl
+    public class ConsoleTextbox : FocusableConsoleControl
     {
         private string _value;
 
