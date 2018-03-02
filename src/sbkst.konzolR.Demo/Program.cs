@@ -37,15 +37,13 @@ namespace sbkst.konzolR.Demo
                      ctx.UnhookInputlook();
                      return true;
                  });
-                test.Keys.On(ConsoleKey.Tab, (ctx) =>
-                {
-                    ctx.FocusNextWindow();
-                    return true;
-                });
-
+             
                 test.HookInputLoop();
 
-      
+                var boundObject = new ABC();
+                boundObject.A = "Testinput";
+                test.GetWindow("test-id").AddControl(new Ui.Controls.BoundTextboxControl<ABC>("abc",boundObject,bind => bind.A));
+
                 test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("nameTextbox", "John Doe"));

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace sbkst.konzolR.Ui.Defaults
 {
-    public interface IDefaultHotkeys : IDefaultWindowHotkeys, IDefaultContextHotkeys
+    public interface IDefaultContextHotkeys
     {
-       
+        IHotkeyDefinition CONTEXT_FOCUS_NEXT_WINDOW { get; }
     }
 }

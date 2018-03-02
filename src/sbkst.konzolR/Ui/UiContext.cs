@@ -36,7 +36,28 @@ namespace sbkst.konzolR.Ui
         public void Initialize(ConsoleColor backgroundColor, IDefaultHotkeys overrideHotkeys = null)
         {
             _defaultHotkeys = (overrideHotkeys != null) ? overrideHotkeys : new DefaultHotkeys();
+            HookupDefaultHotkeys(_defaultHotkeys);
             _canvas.Initiliaze(backgroundColor);
+        }
+
+        private void HookupDefaultHotkeys(IDefaultContextHotkeys hotkeys)
+        {
+            if(hotkeys.CONTEXT_FOCUS_NEXT_WINDOW != null)
+            {
+                this.Keys.On(hotkeys.CONTEXT_FOCUS_NEXT_WINDOW.Key, hotkeys.CONTEXT_FOCUS_NEXT_WINDOW.Modifier, (ctx) =>
+                {
+                    FocusNextWindow();
+                    return true;
+                });
+            }
+        }
+
+        private void HookdownDefaultHotkeys(IDefaultContextHotkeys hotkeys)
+        {
+            if (hotkeys.CONTEXT_FOCUS_NEXT_WINDOW != null)
+            {
+                this.Keys.Off(hotkeys.CONTEXT_FOCUS_NEXT_WINDOW.Key, hotkeys.CONTEXT_FOCUS_NEXT_WINDOW.Modifier);
+            }
         }
 
         public void AddWindow(ConsoleWindow window)
@@ -112,6 +133,7 @@ namespace sbkst.konzolR.Ui
             _inputHandler.Stop();
             _inputHandler.Unregister(this);
             _canvas.Dispose();
+            HookdownDefaultHotkeys(this._defaultHotkeys);
             _defaultHotkeys = null;
         }
 
