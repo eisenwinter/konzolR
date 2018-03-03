@@ -44,7 +44,15 @@ namespace sbkst.konzolR.Ui.Controls
             }            
         }
 
-        protected bool HookStandardKeys(ControlKeyReceived controlKey, Action delete, Action backspace, Action newLine, Action tab)
+        protected class StandardKeyArgs
+        {
+            public Action OnDeletePressed { get; set; }
+            public Action OnBackspacePressed { get; set; }
+            public Action OnEnterPressed { get; set; }
+            public Action OnTabPressed { get; set; }
+        }
+
+        protected bool HookStandardKeys(ControlKeyReceived controlKey, StandardKeyArgs args)
         {
             if (controlKey.Key == ConsoleKey.LeftArrow && CursorPosition.X > 0)
             {
@@ -56,30 +64,30 @@ namespace sbkst.konzolR.Ui.Controls
                 CursorPosition.X++;
                 return true;
             }
-            else if (controlKey.Key == ConsoleKey.Backspace)
+            else if (controlKey.Key == ConsoleKey.Backspace && args.OnBackspacePressed != null)
             {
                 if (CursorPosition.X > 0)
                 {
                     CursorPosition.X--;
-                    backspace();
+                    args?.OnBackspacePressed();
                 }
                 return true;
             }
-            else if (controlKey.Key == ConsoleKey.Delete)
+            else if (controlKey.Key == ConsoleKey.Delete && args.OnDeletePressed != null)
             {
-                delete();
+                args?.OnDeletePressed();
                 return true;
-            }else if (controlKey.Key == ConsoleKey.Enter)
+            }else if (controlKey.Key == ConsoleKey.Enter && args.OnEnterPressed != null) 
             {
                 if(this.Size.Height-1 > CursorPosition.Y)
                 {
                     CursorPosition.Y++;
                 }
-                newLine();
+                args.OnEnterPressed();
                 return true;
-            }else if(controlKey.Key == ConsoleKey.Tab)
+            }else if(controlKey.Key == ConsoleKey.Tab && args.OnTabPressed != null)
             {
-                tab();
+                args.OnTabPressed();
                 return true;
             }
             return false;

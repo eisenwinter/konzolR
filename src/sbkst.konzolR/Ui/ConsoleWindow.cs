@@ -391,8 +391,6 @@ namespace sbkst.konzolR.Ui
                 var ctrl = GetListeningControl();
                 if (ctrl.KeyReceived(input))
                 {
-                    //ToDo: correct redraw
-                    //FixMe: relative position to absolute
                     OnRequestRedraw?.Invoke(ctrl as Controls.ConsoleControl);
                     var c = ctrl.CursorPosition.GetAbsolutePosition();
                     Cursor.RequestChange(new CursorPositionChange(c.X, c.Y));

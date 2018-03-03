@@ -67,31 +67,35 @@ namespace sbkst.konzolR.Ui.Controls
 #if DEBUG
             System.Diagnostics.Trace.WriteLine(String.Format("Control {0} [{1},{2}|{3},{4}] received key {5}", this.Id, this.Position.X, this.Position.Y, this.Size.Width, this.Size.Height, controlKey.Key));
 #endif
-           
 
-            if(!HookStandardKeys(controlKey, () =>
+            var standardArgs = new StandardKeyArgs();
+            standardArgs.OnBackspacePressed = () =>
             {
-                if(CursorPosition.X > 0 && CursorPosition.X < Value.Length)
+                var sb = new StringBuilder(this.Value);
+                sb.Remove(CursorPosition.X, 1);
+                this.Value = sb.ToString();
+                this._currentSize = Value.Length;
+            };
+            standardArgs.OnDeletePressed = () =>
+            {
+                if (CursorPosition.X > 0 && CursorPosition.X < Value.Length)
                 {
                     var sb = new StringBuilder(this.Value);
                     sb.Remove(CursorPosition.X, 1);
                     this.Value = sb.ToString();
                     this._currentSize = Value.Length;
                 }
-            }, () =>
-            {
-                var sb = new StringBuilder(this.Value);
-                sb.Remove(CursorPosition.X, 1);
-                this.Value = sb.ToString();
-                this._currentSize = Value.Length;
-
-            }, () =>
+            };
+            standardArgs.OnEnterPressed = () =>
             {
                 this.Blur();
-            }, () =>
+            };
+            standardArgs.OnTabPressed = () =>
             {
 
-            }))
+            };
+
+            if(!HookStandardKeys(controlKey, standardArgs))
             {
 
                 if (CursorPosition.X < Value.Length)
