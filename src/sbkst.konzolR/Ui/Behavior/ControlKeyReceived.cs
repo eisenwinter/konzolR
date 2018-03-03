@@ -13,12 +13,26 @@ namespace sbkst.konzolR.Ui.Behavior
             this.Key = key;   
         }
 
+        public ControlKeyReceived(ConsoleKey key, char character)
+        {
+            this.Key = key;
+            this.Character = character;
+        }
+
         public ControlKeyReceived(ConsoleKey key, ConsoleModifiers modifier)
         {
             this.Modifier = modifier;
             this.Key = key;
         }
 
+        public ControlKeyReceived(ConsoleKey key, ConsoleModifiers modifier, char character)
+        {
+            this.Modifier = modifier;
+            this.Key = key;
+            this.Character = character;
+        }
+
+        public char Character { get; private set; }
         public ConsoleModifiers? Modifier { get; private set; }
         public ConsoleKey Key { get; private set; }
 

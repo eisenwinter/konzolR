@@ -27,6 +27,7 @@ namespace sbkst.konzolR.Ui.Controls
         {
             _value = value;
         }
+
         public override IRenderProvider GetProvider()
         {
             return new ControlRenderEngine(this, _value);

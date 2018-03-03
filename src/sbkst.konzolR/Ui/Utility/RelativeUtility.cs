@@ -13,8 +13,8 @@ namespace sbkst.konzolR.Ui.Utility
         {
             return new Position
             {
-                X = (ushort)(to.X - x.X),
-                Y = (ushort)(to.Y - x.Y)
+                X = (ushort)(to.X - x.X).Clamp(0,UInt16.MaxValue),
+                Y = (ushort)(to.Y - x.Y).Clamp(0,UInt16.MaxValue)
             };
         }
     }

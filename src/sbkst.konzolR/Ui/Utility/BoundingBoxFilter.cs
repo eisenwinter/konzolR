@@ -11,7 +11,14 @@ namespace sbkst.konzolR.Ui.Utility
     {
         public static Func<IRenderable,bool> Filter(uint x, uint y)
         {
+            
             return a => a.Position.X <= x && a.Position.Y <= y && (a.Position.X + a.Size.Width) > x && (a.Position.Y + a.Size.Height) > y;
+        }
+
+        public static bool Within(this IRenderable renderable, uint x, uint y)
+        {
+            var p = renderable.Position.GetAbsolutePosition();
+            return p.X >= x && p.Y >= y && (p.X + renderable.Size.Width) > x && (p.Y + renderable.Size.Height) > y;
         }
     }
 }

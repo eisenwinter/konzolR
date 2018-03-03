@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Rendering;
+using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Layout;
 namespace sbkst.konzolR.Ui.Controls
 {
@@ -23,5 +24,7 @@ namespace sbkst.konzolR.Ui.Controls
         public Size Size { get; protected set; }
 
         public abstract IRenderProvider GetProvider();
+
+      
     }
 }

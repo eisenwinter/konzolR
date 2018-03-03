@@ -67,7 +67,7 @@ namespace sbkst.konzolR.Ui
                     }
                     if (!full)
                     {
-                        RedrawArea(window.Position, window.Size);
+                        RedrawArea(window.Position.GetAbsolutePosition(), window.Size);
                     }
                     else
                     {

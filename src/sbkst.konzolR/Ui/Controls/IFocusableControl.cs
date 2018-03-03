@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.IO;
+using System.ComponentModel;
 namespace sbkst.konzolR.Ui.Controls
 {
     /// <summary>
@@ -11,6 +12,7 @@ namespace sbkst.konzolR.Ui.Controls
     /// </summary>
     public interface IFocusableControl
     {
+        Boolean HasFocus { get; }
         void Focus();
         void Blur();
     }

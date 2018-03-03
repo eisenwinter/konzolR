@@ -22,6 +22,7 @@ namespace sbkst.konzolR.Ui
        
         private InputHandler _inputHandler;
         private DefaultBehaviorObserver<CursorPositionChange> _cursorTracking; 
+
         public UiContext()
         {
             _inputHandler = new InputHandler();
@@ -35,7 +36,7 @@ namespace sbkst.konzolR.Ui
 
         public void Initialize(ConsoleColor backgroundColor, IDefaultHotkeys overrideHotkeys = null)
         {
-            _defaultHotkeys = (overrideHotkeys != null) ? overrideHotkeys : new DefaultHotkeys();
+            _defaultHotkeys = overrideHotkeys ?? new DefaultHotkeys();
             HookupDefaultHotkeys(_defaultHotkeys);
             _canvas.Initiliaze(backgroundColor);
         }

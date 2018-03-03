@@ -20,9 +20,9 @@ namespace sbkst.konzolR.Ui
                 IKeyListener<ConsoleWindow>
     {
         private int _zindex = 0;
-        private ushort _padding = 1;
+        private Padding _padding =  new Padding(1);
 
-        public ushort Padding
+        public Padding WindowPadding
         {
             get
             {
@@ -283,10 +283,10 @@ namespace sbkst.konzolR.Ui
 
         private void ApplyPadding(Controls.ConsoleControl control)
         {
-            if ((this.Size.Width - (Padding * 2)) > 0)
+            if ((this.Size - WindowPadding).Width > 0)
             {
-                control.Size.Width = (ushort)(this.Size.Width - (Padding * 2));
-                control.Position.X = this.Padding;
+                control.Size.Width = (ushort)(this.Size.Width - (WindowPadding.Left + WindowPadding.Right));
+                control.Position.X = this.WindowPadding.Left;
             }
             else //if we cant apply the padding we will just try to scale it all the way
             {
@@ -300,6 +300,7 @@ namespace sbkst.konzolR.Ui
             control.Size.Height = 1;
             control.Position.Y = (ushort)(2 + _controls.Count);
             ApplyPadding(control);
+            control.Position.SetRelativeTo(this.Position);
             _controls.Add(control.Id, control);
             OnRequestRedraw?.Invoke(this);
         }
@@ -317,6 +318,7 @@ namespace sbkst.konzolR.Ui
                 //basic auto-masonry vertical
                 ApplyPadding(control.Value);
                 control.Value.Position.Y = (ushort)(2 + idx);
+                control.Value.Position.SetRelativeTo(Position);
                 idx++;
             }
         }
@@ -367,8 +369,7 @@ namespace sbkst.konzolR.Ui
                 (_controls[_currentlyFocusedId] as Controls.IFocusableControl).Blur();
             }
              (ctrl as Controls.IFocusableControl).Focus();
-            _currentlyFocusedId = ctrl.Id;
-           
+            _currentlyFocusedId = ctrl.Id;  
         }
 
         public void Update(ControlKeyReceived input)
@@ -388,12 +389,18 @@ namespace sbkst.konzolR.Ui
             if (!isSuccessfullyExecuted && _focused && HasControlListening)
             {
                 var ctrl = GetListeningControl();
-                //if (ctrl.KeyReceived(input))
-                //{
-                //    //ToDo: correct redraw
-                //    //FixMe: relative position to absolute
-                //    OnRequestRedraw?.Invoke(ctrl as Controls.ConsoleControl);
-                //}
+                if (ctrl.KeyReceived(input))
+                {
+                    //ToDo: correct redraw
+                    //FixMe: relative position to absolute
+                    OnRequestRedraw?.Invoke(ctrl as Controls.ConsoleControl);
+                    var c = ctrl.CursorPosition.GetAbsolutePosition();
+                    Cursor.RequestChange(new CursorPositionChange(c.X, c.Y));
+                    if (!ctrl.HasFocus)
+                    {
+                        this.FocusNextControl();
+                    }
+                }
             }
         }
 

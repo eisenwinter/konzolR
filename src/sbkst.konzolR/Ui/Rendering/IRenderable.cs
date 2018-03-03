@@ -12,5 +12,7 @@ namespace sbkst.konzolR.Ui.Rendering
         Position Position { get; }
 
         IRenderProvider GetProvider();
+
+       
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.IO;
 
 namespace sbkst.konzolR.Ui.Controls
 {
@@ -38,5 +39,7 @@ namespace sbkst.konzolR.Ui.Controls
         {
             this.HasFocus = true;
         }
+
+      
     }
 }

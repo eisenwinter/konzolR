@@ -40,6 +40,11 @@ namespace sbkst.konzolR.Ui.Input
             _inputThread.Start();
         }
 
+        public TextReader GetInputStream()
+        {
+            return Console.In;
+        }
+
         public void StartBlocking()
         {
             _listening = true;
@@ -60,14 +65,14 @@ namespace sbkst.konzolR.Ui.Input
                 {
                     foreach(var r in _receivers)
                     {
-                        r.Update(new Behavior.ControlKeyReceived(key.Key,key.Modifiers));
+                        r.Update(new Behavior.ControlKeyReceived(key.Key,key.Modifiers,key.KeyChar));
                     }
                 }
                 else
                 {
                     foreach (var r in _receivers)
                     {
-                        r.Update(new Behavior.ControlKeyReceived(key.Key));
+                        r.Update(new Behavior.ControlKeyReceived(key.Key,key.KeyChar));
                     }
                 }
             }
