@@ -12,6 +12,7 @@ namespace sbkst.konzolR.Ui.Controls
     /// </summary>
     public interface IFocusableControl
     {
+        bool CursorVisible { get; }
         Boolean HasFocus { get; }
         void Focus();
         void Blur();

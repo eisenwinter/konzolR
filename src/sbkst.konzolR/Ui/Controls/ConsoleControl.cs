@@ -17,6 +17,17 @@ namespace sbkst.konzolR.Ui.Controls
             this.Size = new Size();
         }
 
+        private bool _valid = true;
+        public bool Valid { get
+            {
+                return _valid;
+            }
+            protected set
+            {
+                _valid = value;
+            }
+        }
+
         public virtual bool IsReadonly { get; protected set; }
         public string Id { get; private set; }
         public Position Position { get; protected set; }

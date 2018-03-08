@@ -11,7 +11,7 @@ using sbkst.konzolR.Ui.Utility;
 using System.ComponentModel;
 namespace sbkst.konzolR.Ui.Controls
 {
-    public class BoundTextboxControl<T> : ListeningConsoleControl
+    public class BoundTextboxControl<T> : ConsoleTextbox
     {
         T _boundObject;
         Func<T, string> _boundProperty;
@@ -25,7 +25,7 @@ namespace sbkst.konzolR.Ui.Controls
             }
         }
 
-        public string Value
+        public override string Value
         {
             get
             {
@@ -38,11 +38,15 @@ namespace sbkst.konzolR.Ui.Controls
             set
             {
                 _propertyInfo.SetValue(_boundObject, value, null);
+                if(value != null)
+                {
+                    this._currentSize = Value.Length;
+                }
             }
         }
 
 
-        public BoundTextboxControl(string id, T obj, Expression<Func<T, string>> field) : base(id)
+        public BoundTextboxControl(string id, T obj, Expression<Func<T, string>> field) : base(id,"")
         {
             _boundObject = obj;
             _boundProperty = field.Compile();
@@ -62,65 +66,6 @@ namespace sbkst.konzolR.Ui.Controls
 
 
 
-        public override bool KeyReceived(ControlKeyReceived controlKey)
-        {
-#if DEBUG
-            System.Diagnostics.Trace.WriteLine(String.Format("Control {0} [{1},{2}|{3},{4}] received key {5}", this.Id, this.Position.X, this.Position.Y, this.Size.Width, this.Size.Height, controlKey.Key));
-#endif
-
-            var standardArgs = new StandardKeyArgs();
-            standardArgs.OnBackspacePressed = () =>
-            {
-                var sb = new StringBuilder(this.Value);
-                sb.Remove(CursorPosition.X, 1);
-                this.Value = sb.ToString();
-                this._currentSize = Value.Length;
-            };
-            standardArgs.OnDeletePressed = () =>
-            {
-                if (CursorPosition.X > 0 && CursorPosition.X < Value.Length)
-                {
-                    var sb = new StringBuilder(this.Value);
-                    sb.Remove(CursorPosition.X, 1);
-                    this.Value = sb.ToString();
-                    this._currentSize = Value.Length;
-                }
-            };
-            standardArgs.OnEnterPressed = () =>
-            {
-                this.Blur();
-            };
-            standardArgs.OnTabPressed = () =>
-            {
-
-            };
-
-            if(!HookStandardKeys(controlKey, standardArgs))
-            {
-
-                if (CursorPosition.X < Value.Length)
-                {
-                    var sb = new StringBuilder(this.Value);
-                    sb[CursorPosition.X] = controlKey.Character;
-                    this.Value = sb.ToString();
-                    if(CursorPosition.X < this.Size.Width - 1)
-                    {
-                        CursorPosition.X++;
-                    }
-                }
-                else
-                {
-                    this.Value = Value + controlKey.Character;
-                    this._currentSize = Value.Length;
-                    if (CursorPosition.X < this.Size.Width - 1)
-                    {
-                        CursorPosition.X++;
-                    }
-                }
-
-            }
-
-            return true;
-        }
+      
     }
 }

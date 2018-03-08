@@ -19,6 +19,84 @@ namespace sbkst.konzolR.Ui.Utility
             return (ushort)((ushort)color << 4);
         }
 
+        public static ConsoleColor Highlight(this ConsoleColor color)
+        {
+            if (color.IsDark()) return color.Brighten();
+            else return color.Darken();
+        }
+
+        public static bool IsDark(this ConsoleColor color)
+        {
+            return new ConsoleColor[] { ConsoleColor.DarkBlue, ConsoleColor.DarkCyan, ConsoleColor.DarkGray, ConsoleColor.DarkGreen, ConsoleColor.DarkMagenta, ConsoleColor.DarkRed, ConsoleColor.DarkYellow, ConsoleColor.Black }
+            .Contains(color);
+        }
+
+        public static bool IsBright(this ConsoleColor color)
+        {
+            return !color.IsDark();
+        }
+
+        public static ConsoleColor Brighten(this ConsoleColor color)
+        {
+            switch (color)
+            {
+                case ConsoleColor.Black:
+                    return ConsoleColor.DarkGray;
+                case ConsoleColor.DarkBlue:
+                    return ConsoleColor.Blue;
+                case ConsoleColor.DarkCyan:
+                    return ConsoleColor.Cyan;
+                case ConsoleColor.DarkGray:
+                    return ConsoleColor.Gray;
+                case ConsoleColor.DarkGreen:
+                    return ConsoleColor.Green;
+                case ConsoleColor.DarkMagenta:
+                    return ConsoleColor.Magenta;
+                case ConsoleColor.DarkRed:
+                    return ConsoleColor.Red;
+                case ConsoleColor.DarkYellow:
+                    return ConsoleColor.Yellow;
+                default:
+                    return color;
+            }
+        }
+
+        public static ConsoleColor Darken(this ConsoleColor color)
+        {
+            switch (color)
+            {
+                case ConsoleColor.DarkGray:
+                    return ConsoleColor.Black;
+                case ConsoleColor.Blue:
+                    return ConsoleColor.DarkBlue;
+                case ConsoleColor.Cyan:
+                    return ConsoleColor.DarkCyan;
+                case ConsoleColor.Gray:
+                    return ConsoleColor.DarkGray;
+                case ConsoleColor.Green:
+                    return ConsoleColor.DarkGreen;
+                case ConsoleColor.Magenta:
+                    return ConsoleColor.DarkMagenta;
+                case ConsoleColor.Red:
+                    return ConsoleColor.DarkRed;
+                case ConsoleColor.Yellow:
+                    return ConsoleColor.DarkYellow;
+                default:
+                    return color;
+            }
+        }
+
+        public static ushort RgbToForegroundDWORD(uint r, uint g, uint b)
+        {
+            return (ushort)(r + (g << 8) + (b << 16));
+        }
+
+
+        public static ushort RgbToBackgroundDWORD(uint r, uint g, uint b)
+        {
+            return (ushort)(RgbToForegroundDWORD(r,g,b) << 4);
+        }
+
         /// <summary>
         /// Convert system colo to dword
         /// </summary>

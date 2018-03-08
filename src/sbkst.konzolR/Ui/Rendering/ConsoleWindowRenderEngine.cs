@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Utility;
-
 namespace sbkst.konzolR.Ui.Rendering
 {
     class ConsoleWindowRenderEngine : RenderEngine
@@ -29,7 +28,9 @@ namespace sbkst.konzolR.Ui.Rendering
                 {
                    return new Tuple<char, ushort>(title[x-1], (_renderable as ConsoleWindow).BackgroundColor.ColorToBackgroundDWORD());
                 }
-                return new Tuple<char, ushort>(' ', (_renderable as ConsoleWindow).BackgroundColor.ColorToBackgroundDWORD());
+
+                
+                return new Tuple<char, ushort>((_renderable as ConsoleWindow).Border(x,y), (_renderable as ConsoleWindow).BackgroundColor.ColorToBackgroundDWORD());
             }
             else
             {
@@ -42,7 +43,7 @@ namespace sbkst.konzolR.Ui.Rendering
                 }
                 else
                 {
-                    return new Tuple<char, ushort>(' ', (_renderable as ConsoleWindow).BackgroundColor.ColorToBackgroundDWORD());
+                    return new Tuple<char, ushort>((_renderable as ConsoleWindow).Border(x, y), (_renderable as ConsoleWindow).BackgroundColor.ColorToBackgroundDWORD());
                 }
             }
         }

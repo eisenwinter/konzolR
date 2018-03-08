@@ -20,7 +20,20 @@ namespace sbkst.konzolR.Ui
                 IKeyListener<ConsoleWindow>
     {
         private int _zindex = 0;
-        private Padding _padding =  new Padding(1);
+        private Padding _padding = new Padding(1);
+        private bool _border = true;
+
+        public Boolean Border
+        {
+            get
+            {
+                return _border;
+            }
+            set
+            {
+                _border = value;
+            }
+        }
 
         public Padding WindowPadding
         {
@@ -110,7 +123,7 @@ namespace sbkst.konzolR.Ui
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
             if (ctrl != null)
             {
-                SetFocusTo(this.Controls.Previous(ctrl, true));
+                SetFocusTo(this.Controls.Where(c=>c is Controls.IFocusableControl).Previous(ctrl, true));
             }
         }
 
@@ -119,7 +132,7 @@ namespace sbkst.konzolR.Ui
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
             if (ctrl != null)
             {
-                SetFocusTo(this.Controls.Next(ctrl, true));
+                SetFocusTo(this.Controls.Where(c => c is Controls.IFocusableControl).Next(ctrl, true));
             }
         }
 
@@ -150,6 +163,7 @@ namespace sbkst.konzolR.Ui
                     _isMaximized = false;
                 }
                 PerformLayout();
+                //FIXME: wrong absolute restore position
                 RefreshCursorPosition();
                 OnRequestRedraw?.Invoke(this, true);
                 _currentlyMaximizing = false;
@@ -361,15 +375,24 @@ namespace sbkst.konzolR.Ui
         {
             ushort x = (ushort)(ctrl.Position.X + this.Position.X);
             ushort y = (ushort)(ctrl.Position.Y + this.Position.Y);
-            if (this.HasFocus) { 
-                Cursor.RequestChange(new CursorPositionChange(x, y));
+            if (this.HasFocus)
+            {
+                Cursor.RequestChange(new CursorPositionChange(x, y, (ctrl as Controls.IFocusableControl).CursorVisible));
             }
             if (!String.IsNullOrEmpty(_currentlyFocusedId))
             {
                 (_controls[_currentlyFocusedId] as Controls.IFocusableControl).Blur();
+                if (!_controls[_currentlyFocusedId].Valid)
+                {
+                    OnRequestRedraw?.Invoke(_controls[_currentlyFocusedId]);
+                }
             }
              (ctrl as Controls.IFocusableControl).Focus();
-            _currentlyFocusedId = ctrl.Id;  
+            _currentlyFocusedId = ctrl.Id;
+            if (!ctrl.Valid)
+            {
+                OnRequestRedraw?.Invoke(ctrl);
+            }
         }
 
         public void Update(ControlKeyReceived input)
@@ -377,12 +400,12 @@ namespace sbkst.konzolR.Ui
             bool isSuccessfullyExecuted = false;
             if (this._focused)
             {
-                if(_eventHandlers.Value.Execute(input.GenerateDictionaryKey("f"), this))
+                if (_eventHandlers.Value.Execute(input.GenerateDictionaryKey("f"), this))
                 {
                     isSuccessfullyExecuted = true;
                 }
             }
-            if(_eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this))
+            if (_eventHandlers.Value.Execute(input.GenerateDictionaryKey("a"), this))
             {
                 isSuccessfullyExecuted = true;
             }
@@ -393,7 +416,7 @@ namespace sbkst.konzolR.Ui
                 {
                     OnRequestRedraw?.Invoke(ctrl as Controls.ConsoleControl);
                     var c = ctrl.CursorPosition.GetAbsolutePosition();
-                    Cursor.RequestChange(new CursorPositionChange(c.X, c.Y));
+                    Cursor.RequestChange(new CursorPositionChange(c.X, c.Y, ctrl.CursorVisible));
                     if (!ctrl.HasFocus)
                     {
                         this.FocusNextControl();

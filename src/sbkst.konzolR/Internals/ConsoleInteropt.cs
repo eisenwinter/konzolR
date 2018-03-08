@@ -128,7 +128,7 @@ namespace sbkst.konzolR.Internals
         /// <param name="dwWriteCoord"></param>
         /// <param name="lpNumberOfCharsWritten"></param>
         /// <returns></returns>
-        [DllImport("kernel32.dll", SetLastError = true)]
+        [DllImport("kernel32.dll", SetLastError = true,CharSet = CharSet.Auto)]
         public static extern bool FillConsoleOutputCharacter(IntPtr hConsoleOutput, char cCharacter, uint nLength, COORD dwWriteCoord, out uint lpNumberOfCharsWritten);
 
         /// <summary>

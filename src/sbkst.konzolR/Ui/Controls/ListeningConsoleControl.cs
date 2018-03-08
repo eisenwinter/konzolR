@@ -54,14 +54,16 @@ namespace sbkst.konzolR.Ui.Controls
 
         protected bool HookStandardKeys(ControlKeyReceived controlKey, StandardKeyArgs args)
         {
-            if (controlKey.Key == ConsoleKey.LeftArrow && CursorPosition.X > 0)
+            if (controlKey.Key == ConsoleKey.LeftArrow )
             {
-                CursorPosition.X--;
+                if(CursorPosition.X > 0)
+                    CursorPosition.X--;
                 return true;
             }
-            else if (controlKey.Key == ConsoleKey.RightArrow && CursorPosition.X <= _currentSize && CursorPosition.X < this.Size.Width - 1)
+            else if (controlKey.Key == ConsoleKey.RightArrow)
             {
-                CursorPosition.X++;
+                if (CursorPosition.X <= _currentSize && CursorPosition.X < this.Size.Width - 1)
+                    CursorPosition.X++;
                 return true;
             }
             else if (controlKey.Key == ConsoleKey.Backspace && args.OnBackspacePressed != null)
@@ -112,6 +114,7 @@ namespace sbkst.konzolR.Ui.Controls
                 };
             }
         }
+
 
    
 

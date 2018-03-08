@@ -34,6 +34,19 @@ namespace sbkst.konzolR.Ui
 
         private Dictionary<string, ConsoleWindow> _windows = new Dictionary<string, ConsoleWindow>();
 
+        private bool _suspended = false;
+
+        public void Suspend()
+        {
+            _suspended = true;
+        }
+
+        public void Resume()
+        {
+            _suspended = false;
+            UpdateScreenBuffer(_screenBuffer);
+        }
+
         public IEnumerable<ConsoleWindow> Windows
         {
             get
@@ -235,6 +248,8 @@ namespace sbkst.konzolR.Ui
 
         private void UpdateScreenBuffer(IntPtr buffer)
         {
+            if (_suspended)
+                return;
 #if DEBUG
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();

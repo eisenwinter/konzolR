@@ -14,5 +14,7 @@ namespace sbkst.konzolR.Ui.Controls
     {
         bool KeyReceived(ControlKeyReceived controlKey);
         Position CursorPosition { get; }
+
+
     }
 }

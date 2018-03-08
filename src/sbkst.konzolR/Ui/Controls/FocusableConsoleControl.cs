@@ -14,6 +14,22 @@ namespace sbkst.konzolR.Ui.Controls
         {
         }
 
+        private bool _cursorVisible = true;
+
+        public Boolean CursorVisible
+        {
+            get
+            {
+                return _cursorVisible;
+            }
+            protected set
+            {
+                _cursorVisible = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("CursorVisible"));
+            }
+        }
+
+
         private bool _focus;
         public Boolean HasFocus
         {
@@ -30,12 +46,12 @@ namespace sbkst.konzolR.Ui.Controls
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void Blur()
+        public virtual void Blur()
         {
             this.HasFocus = false;
         }
 
-        public void Focus()
+        public virtual void Focus()
         {
             this.HasFocus = true;
         }

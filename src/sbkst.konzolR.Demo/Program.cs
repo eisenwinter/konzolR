@@ -37,16 +37,25 @@ namespace sbkst.konzolR.Demo
                      ctx.UnhookInputlook();
                      return true;
                  });
-             
+
                 test.HookInputLoop();
 
-                var boundObject = new ABC();
-                boundObject.A = "Testinput";
-                test.GetWindow("test-id").AddControl(new Ui.Controls.BoundTextboxControl<ABC>("abc",boundObject,bind => bind.A));
+                var boundObject = new ABC
+                {
+                    A = "Testinput"
+                };
+                test.GetWindow("test-id").AddControl(new Ui.Controls.BoundTextboxControl<ABC>("abc", boundObject, bind => bind.A));
+                test.GetWindow("test-id").AddControl(new Ui.Controls.ConsoleButton("ok-button", "Ok", () =>
+                  {
+                      test.RemoveWindow("test-id");
+                  }));
+
 
                 test.AddWindow(new Ui.ConsoleWindow("Hello!", "overlapping-id", new Ui.Layout.Size(9, 10), new Ui.Layout.Position(3, 3)));
                 test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.Green);
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleLabel("nameLabel", "Name", ConsoleColor.Green));
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("nameTextbox", "John Doe"));
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleLabel("fromLabel", "From", ConsoleColor.Green));
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("fromTextbox", "Nowhere"));
                 test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.N, (window) =>
                  {
@@ -62,7 +71,7 @@ namespace sbkst.konzolR.Demo
 
                 //test.GetWindow("overlapping-id").ChangeBackgroundColor(ConsoleColor.DarkBlue);
                 //Console.ReadKey();
-                
+
                 //test.Focus("test-id");
                 //Console.ReadKey();
                 //test.Focus("overlapping-id");
@@ -71,8 +80,9 @@ namespace sbkst.konzolR.Demo
                 //Console.ReadKey();
                 //test.GetWindow("test-id").AddControl(new Ui.Controls.InfotextControl("infotest", "Hello there!"));
                 //Console.ReadKey();
+
             }
-  
+
 
             //title screen demo
             using (var title = TitleHelper.CreateTitlescreenFor("Superawsome Application!"))
@@ -185,7 +195,7 @@ namespace sbkst.konzolR.Demo
                 }
                 bar.Done();
             }
-  
+
 
         }
     }

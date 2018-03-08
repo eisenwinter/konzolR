@@ -17,11 +17,6 @@ namespace sbkst.konzolR.Ui.Input
         private bool _listening = false;
         List<Behavior.IObserve<Behavior.ControlKeyReceived>> _receivers = new List<Behavior.IObserve<Behavior.ControlKeyReceived>>();
 
-        public InputHandler()
-        {
-            
-         
-        }
 
         public void Register(Behavior.IObserve<Behavior.ControlKeyReceived> observe)
         {
@@ -63,14 +58,14 @@ namespace sbkst.konzolR.Ui.Input
                 var key = Console.ReadKey(true);
                 if (key.Modifiers == ConsoleModifiers.Control)
                 {
-                    foreach(var r in _receivers)
+                    foreach(var r in _receivers.ToArray())
                     {
                         r.Update(new Behavior.ControlKeyReceived(key.Key,key.Modifiers,key.KeyChar));
                     }
                 }
                 else
                 {
-                    foreach (var r in _receivers)
+                    foreach (var r in _receivers.ToArray())
                     {
                         r.Update(new Behavior.ControlKeyReceived(key.Key,key.KeyChar));
                     }
