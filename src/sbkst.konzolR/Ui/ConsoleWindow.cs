@@ -155,7 +155,8 @@ namespace sbkst.konzolR.Ui
                 }
                 else
                 {
-                    this._position = new Position(this._rollbackPosition);
+                    this._position.X = _rollbackPosition.X;
+                    this._position.Y = _rollbackPosition.Y;
                     this._size = new Size(_rollbackSize);
                     this._rollbackPosition = null;
                     this._rollbackSize = null;
@@ -163,12 +164,6 @@ namespace sbkst.konzolR.Ui
                     _isMaximized = false;
                 }
                 PerformLayout();
-                //FIXME: wrong absolute restore position
-                //this.Controls.Where(a => a is Controls.IListeningControl).Select(s => s as Controls.IListeningControl).ToList().ForEach(f =>
-                //{
-                //    f.CursorPosition.SetRelativeTo(this.Position);
-
-                //});
                 RefreshCursorPosition();
                 OnRequestRedraw?.Invoke(this, true);
                 _currentlyMaximizing = false;

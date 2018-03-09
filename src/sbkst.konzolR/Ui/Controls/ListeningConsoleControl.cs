@@ -14,8 +14,7 @@ namespace sbkst.konzolR.Ui.Controls
     public abstract class ListeningConsoleControl : FocusableConsoleControl, IListeningControl
     {
         private Position _cursorPosition = new Position(0, 0);
-        protected long _currentSize = 0;
-
+        protected int _currentSize = 0;
 
         protected ListeningConsoleControl(string id) : base(id)
         {
@@ -25,15 +24,15 @@ namespace sbkst.konzolR.Ui.Controls
                 {
                     if (this.HasFocus)
                     {
-                        _cursorPosition.X = (ushort)_currentSize.Clamp(0,this.Size.Width-1);
+                        _cursorPosition.X = (ushort)_currentSize.Clamp(0, this.Size.Width - 1);
                         _cursorPosition.Y = 0;
                         //TODO: remove
                         //_cursorPosition.SetRelativeTo(this.Position);
                     }
                 }
-                
+
             };
-            if(_cursorPosition != null)
+            if (_cursorPosition != null)
             {
                 _cursorPosition.SetRelativeTo(this.Position);
                 _cursorPosition.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
@@ -57,17 +56,23 @@ namespace sbkst.konzolR.Ui.Controls
 
         protected bool HookStandardKeys(ControlKeyReceived controlKey, StandardKeyArgs args)
         {
-            if (controlKey.Key == ConsoleKey.LeftArrow )
+            if (controlKey.Key == ConsoleKey.LeftArrow)
             {
-                if(CursorPosition.X > 0)
+                if (CursorPosition.X > 0)
+                {
                     CursorPosition.X--;
-                return true;
+                    return true;
+                }
+                return false;
             }
             else if (controlKey.Key == ConsoleKey.RightArrow)
             {
                 if (CursorPosition.X <= _currentSize && CursorPosition.X < this.Size.Width - 1)
+                {
                     CursorPosition.X++;
-                return true;
+                    return true;
+                }
+                return false;
             }
             else if (controlKey.Key == ConsoleKey.Backspace && args.OnBackspacePressed != null)
             {
@@ -82,15 +87,17 @@ namespace sbkst.konzolR.Ui.Controls
             {
                 args?.OnDeletePressed();
                 return true;
-            }else if (controlKey.Key == ConsoleKey.Enter && args.OnEnterPressed != null) 
+            }
+            else if (controlKey.Key == ConsoleKey.Enter && args.OnEnterPressed != null)
             {
-                if(this.Size.Height-1 > CursorPosition.Y)
+                if (this.Size.Height - 1 > CursorPosition.Y)
                 {
                     CursorPosition.Y++;
                 }
                 args.OnEnterPressed();
                 return true;
-            }else if(controlKey.Key == ConsoleKey.Tab && args.OnTabPressed != null)
+            }
+            else if (controlKey.Key == ConsoleKey.Tab && args.OnTabPressed != null)
             {
                 args.OnTabPressed();
                 return true;

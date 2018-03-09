@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using sbkst.konzolR.Ui.Layout;
 using sbkst.konzolR.Ui.Rendering;
 using sbkst.konzolR.Ui.Behavior;
 namespace sbkst.konzolR.Ui.Controls
 {
     public class ConsoleTextbox : ListeningConsoleControl
     {
-        private string _value;
+        private int _viewboxOffset = 0;
 
+        private string _value;
         public virtual string Value
         {
             get
@@ -27,6 +29,20 @@ namespace sbkst.konzolR.Ui.Controls
             }
         }
 
+        protected string ViewboxValue
+        {
+            get
+            {
+                if (_viewboxOffset > 0)
+                {
+                    var sb = new StringBuilder(Value.Substring(_viewboxOffset));
+                    sb[0] = AsciiArtIndex.THERES_MORE;
+                    return sb.ToString();
+                }
+                return Value;
+            }
+        }
+
         public ConsoleTextbox(string id, string value) : base(id)
         {
             _value = value;
@@ -34,11 +50,18 @@ namespace sbkst.konzolR.Ui.Controls
             {
                 this._currentSize = Value.Length;
             }
+            this.Size.PropertyChanged += (s, e) =>
+            {
+                if(e.PropertyName == "Width")
+                {
+                    _viewboxOffset = 0;
+                }
+            };
         }
 
         public override IRenderProvider GetProvider()
         {
-            return new ControlRenderEngine(this, _value);
+            return new ControlRenderEngine(this, ViewboxValue);
         }
 
         public override bool KeyReceived(ControlKeyReceived controlKey)
@@ -54,7 +77,7 @@ namespace sbkst.konzolR.Ui.Controls
                     if(this.Value.Length > CursorPosition.X)
                     {
                         var sb = new StringBuilder(this.Value);
-                        sb.Remove(CursorPosition.X, 1);
+                        sb.Remove((CursorPosition.X + _viewboxOffset), 1);
                         this.Value = sb.ToString();
                     }
                 },
@@ -63,7 +86,7 @@ namespace sbkst.konzolR.Ui.Controls
                     if (CursorPosition.X >= 0 && CursorPosition.X < Value.Length)
                     {
                         var sb = new StringBuilder(this.Value);
-                        sb.Remove(CursorPosition.X, 1);
+                        sb.Remove((CursorPosition.X + _viewboxOffset), 1);
                         this.Value = sb.ToString();
                     }
                 },
@@ -79,15 +102,34 @@ namespace sbkst.konzolR.Ui.Controls
 
             if (!HookStandardKeys(controlKey, standardArgs))
             {
+                if(controlKey.Key == ConsoleKey.LeftArrow)
+                {
+                    if(_viewboxOffset > 0)
+                    {
+                        _viewboxOffset--;
+                    }
+                    return true;
+                }
+                if (controlKey.Key == ConsoleKey.RightArrow)
+                {
+                    if ((CursorPosition.X + _viewboxOffset) < Value.Length)
+                    {
+                        _viewboxOffset++;
+                    }
+                    return true;
+                }
 
-                if (CursorPosition.X < Value.Length)
+                if ((CursorPosition.X + _viewboxOffset) < Value.Length)
                 {
                     var sb = new StringBuilder(this.Value);
-                    sb[CursorPosition.X] = controlKey.Character;
+                    sb[CursorPosition.X+_viewboxOffset] = controlKey.Character;
                     this.Value = sb.ToString();
                     if (CursorPosition.X < this.Size.Width - 1)
                     {
                         CursorPosition.X++;
+                    }else if((CursorPosition.X + _viewboxOffset) < Value.Length)
+                    {
+                        _viewboxOffset++;
                     }
                 }
                 else
@@ -96,6 +138,10 @@ namespace sbkst.konzolR.Ui.Controls
                     if (CursorPosition.X < this.Size.Width - 1)
                     {
                         CursorPosition.X++;
+                    }
+                    else if((CursorPosition.X + _viewboxOffset) <= Value.Length)
+                    {
+                        _viewboxOffset++;
                     }
                 }
 
