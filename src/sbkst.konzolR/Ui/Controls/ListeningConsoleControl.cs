@@ -26,8 +26,6 @@ namespace sbkst.konzolR.Ui.Controls
                     {
                         _cursorPosition.X = (ushort)_currentSize.Clamp(0, this.Size.Width - 1);
                         _cursorPosition.Y = 0;
-                        //TODO: remove
-                        //_cursorPosition.SetRelativeTo(this.Position);
                     }
                 }
 
@@ -35,14 +33,6 @@ namespace sbkst.konzolR.Ui.Controls
             if (_cursorPosition != null)
             {
                 _cursorPosition.SetRelativeTo(this.Position);
-                _cursorPosition.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-                {
-                    if (new string[] { "X", "Y" }.Any(a => a == e.PropertyName))
-                    {
-                        //TODO: remove
-                        //_cursorPosition.SetRelativeTo(this.Position);
-                    }
-                };
             }
         }
 
@@ -114,15 +104,7 @@ namespace sbkst.konzolR.Ui.Controls
             protected set
             {
                 _cursorPosition = value;
-                //TODO: remove
-                //_cursorPosition.SetRelativeTo(this.Position);
-                _cursorPosition.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
-                {
-                    if (new string[] { "X", "Y" }.Any(a => a == e.PropertyName))
-                    {
-                        //_cursorPosition.SetRelativeTo(this.Position);
-                    }
-                };
+               
             }
         }
 
