@@ -23,21 +23,13 @@ namespace sbkst.konzolR.Ui.Layout
         {
             _x = position.X;
             _y = position.Y;
-            if(position.IsRelative && position._absolutePosition != null)
-            {
-                _absolutePosition = new Position(position._absolutePosition);
-            }
         }
 
-        public Position(Position position, Position absolutePosition)
+        public Position(Position position, Position relativeTo)
         {
             _x = position.X;
             _y = position.Y;
-            if (absolutePosition.IsRelative)
-            {
-                throw new Exceptions.NestedAbsolutePositionException("Cant set a relative position as absolute position");
-            }
-            this._absolutePosition = new Position(absolutePosition);
+            this._absolutePosition = relativeTo;
         }
 
         public Position(ushort x, ushort y)
@@ -46,13 +38,7 @@ namespace sbkst.konzolR.Ui.Layout
             _y = y;
         }
 
-        public Position(ushort x, ushort y, ushort absx, ushort absy)
-        {
-            _x = x;
-            _y = y;
-            this._absolutePosition = new Position(absx, absy);
-        }
-
+      
         private ushort _x;
         /// <summary>
         /// x coordinate
@@ -104,19 +90,20 @@ namespace sbkst.konzolR.Ui.Layout
         /// <returns></returns>
         public Position GetAbsolutePosition()
         {
-            return IsRelative ? this._absolutePosition : this;
+            var pos = new Position(this);
+            var tmp = _absolutePosition;
+            while(tmp != null)
+            {
+                pos._x += tmp._x;
+                pos._y += tmp._y;
+                tmp = tmp._absolutePosition;
+            }
+            return pos;
         }
 
         public void SetRelativeTo(Position position)
         {
-            if (position.IsRelative)
-            {
-                _absolutePosition = position._absolutePosition + this;
-            }
-            else
-            {
-                _absolutePosition = position + this;
-            }
+            _absolutePosition = position;
         }
 
         /// <summary>
@@ -127,16 +114,7 @@ namespace sbkst.konzolR.Ui.Layout
         /// <returns></returns>
         public static Position operator +(Position p, Position q)
         {
-            if (q.IsRelative || p.IsRelative)
-            {
-                var pos = new Position((ushort)(p.X + q.X), (ushort)(p.Y + q.Y)); ;
-                pos._absolutePosition = ((q.IsRelative) ? q._absolutePosition : q) + ((p.IsRelative) ? p._absolutePosition : p);
-                return pos;
-            }
-            else
-            {
-                return new Position((ushort)(p.X + q.X), (ushort)(p.Y + q.Y));
-            }
+            return new Position((ushort)(p.X + q.X), (ushort)(p.Y + q.Y));
         }
 
         public static Position operator - (Position p, ushort i)
@@ -147,11 +125,7 @@ namespace sbkst.konzolR.Ui.Layout
                 Y = (ushort)((p.Y - i).Clamp(0, Int16.MaxValue))
             };
 
-            if (pos.IsRelative)
-            {
-                pos._absolutePosition.X = (ushort)((p._absolutePosition.X - i).Clamp(0, Int16.MaxValue));
-                pos._absolutePosition.Y = (ushort)((p._absolutePosition.Y - i).Clamp(0, Int16.MaxValue));
-            }
+                
             return pos;
         }
 
@@ -162,12 +136,6 @@ namespace sbkst.konzolR.Ui.Layout
                 X = (ushort)((p.X + i).Clamp(0, Int16.MaxValue)),
                 Y = (ushort)((p.Y + i).Clamp(0, Int16.MaxValue))
             };
-
-            if (pos.IsRelative)
-            {
-                pos._absolutePosition.X = (ushort)((p._absolutePosition.X + i).Clamp(0, Int16.MaxValue));
-                pos._absolutePosition.Y = (ushort)((p._absolutePosition.Y + i).Clamp(0, Int16.MaxValue));
-            }
             return pos;
         }
 
