@@ -123,7 +123,7 @@ namespace sbkst.konzolR.Ui
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
             if (ctrl != null)
             {
-                SetFocusTo(this.Controls.Where(c=>c is Controls.IFocusableControl).Previous(ctrl, true));
+                SetFocusTo(this.Controls.Where(c=>c is Controls.IFocusableControl).Next(ctrl, true));
             }
         }
 
@@ -132,7 +132,7 @@ namespace sbkst.konzolR.Ui
             var ctrl = this.Controls.FirstOrDefault(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
             if (ctrl != null)
             {
-                SetFocusTo(this.Controls.Where(c => c is Controls.IFocusableControl).Next(ctrl, true));
+                SetFocusTo(this.Controls.Where(c => c is Controls.IFocusableControl).Previous(ctrl, true));
             }
         }
 
@@ -311,7 +311,10 @@ namespace sbkst.konzolR.Ui
 
         public void AddControl(Controls.ConsoleControl control)
         {
-            control.Size.Height = 1;
+            if(control.Size.Height == 0)
+            {
+                control.Size.Height = 1;
+            }
             control.Position.Y = (ushort)(2 + _controls.Count);
             ApplyPadding(control);
             control.Position.SetRelativeTo(this.Position);

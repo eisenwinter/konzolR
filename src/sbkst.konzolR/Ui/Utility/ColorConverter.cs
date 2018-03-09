@@ -56,6 +56,8 @@ namespace sbkst.konzolR.Ui.Utility
                     return ConsoleColor.Red;
                 case ConsoleColor.DarkYellow:
                     return ConsoleColor.Yellow;
+                case ConsoleColor.Gray:
+                    return ConsoleColor.White;
                 default:
                     return color;
             }
@@ -81,6 +83,8 @@ namespace sbkst.konzolR.Ui.Utility
                     return ConsoleColor.DarkRed;
                 case ConsoleColor.Yellow:
                     return ConsoleColor.DarkYellow;
+                case ConsoleColor.White:
+                    return ConsoleColor.Gray;
                 default:
                     return color;
             }

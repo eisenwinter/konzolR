@@ -57,11 +57,20 @@ namespace sbkst.konzolR.Demo
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("nameTextbox", "John Doe"));
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleLabel("fromLabel", "From", ConsoleColor.Green));
                 test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleTextbox("fromTextbox", "Nowhere"));
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleLabel("sexLabel", "Sex", ConsoleColor.Green));
+
+                var types = new List<Ui.Containers.SelectValue<int>>
+                {
+                    new Ui.Containers.SelectValue<int>(1,"male"),
+                    new Ui.Containers.SelectValue<int>(2,"female")
+                };
+
+                test.GetWindow("overlapping-id").AddControl(new Ui.Controls.ConsoleSelectionList<int>("genderList",types));
                 test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.N, (window) =>
-                 {
-                     test.MaximizeWindow(window.Id);
-                     return true;
-                 });
+                  {
+                      test.MaximizeWindow(window.Id);
+                      return true;
+                  });
                 test.GetWindow("overlapping-id").Keys.WithFocusOn(ConsoleKey.R, (window) =>
                 {
                     test.RestoreWindowSize(window.Id);
