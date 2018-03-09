@@ -141,7 +141,6 @@ namespace sbkst.konzolR.Ui
         {
             if (!_currentlyMaximizing)
             {
-
                 _currentlyMaximizing = true;
 
                 if (!_isMaximized)
@@ -149,7 +148,7 @@ namespace sbkst.konzolR.Ui
                     this._rollbackPosition = new Position(this._position);
                     this._rollbackSize = new Size(this.Size);
                     this.Size.Width = (ushort)(viewPort.Width - 2);
-                    this.Size.Height = (ushort)(viewPort.Height - 2);
+                    this.Size.Height = (ushort)(viewPort.Height  - 2);
                     this.Position.X = 1;
                     this.Position.Y = 1;
                     _isMaximized = true;
@@ -160,10 +159,16 @@ namespace sbkst.konzolR.Ui
                     this._size = new Size(_rollbackSize);
                     this._rollbackPosition = null;
                     this._rollbackSize = null;
+
                     _isMaximized = false;
                 }
                 PerformLayout();
                 //FIXME: wrong absolute restore position
+                //this.Controls.Where(a => a is Controls.IListeningControl).Select(s => s as Controls.IListeningControl).ToList().ForEach(f =>
+                //{
+                //    f.CursorPosition.SetRelativeTo(this.Position);
+
+                //});
                 RefreshCursorPosition();
                 OnRequestRedraw?.Invoke(this, true);
                 _currentlyMaximizing = false;
@@ -332,7 +337,6 @@ namespace sbkst.konzolR.Ui
                 //basic auto-masonry vertical
                 ApplyPadding(control.Value);
                 control.Value.Position.Y = (ushort)(2 + idx);
-                control.Value.Position.SetRelativeTo(Position);
                 idx++;
             }
         }
@@ -360,6 +364,7 @@ namespace sbkst.konzolR.Ui
 
         private void RefreshCursorPosition()
         {
+       
             if (this.Controls.Any(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty)))
             {
                 var ctrl = this.Controls.First(a => a is Controls.IFocusableControl && (a.Id == _currentlyFocusedId || _currentlyFocusedId == string.Empty));
@@ -369,6 +374,8 @@ namespace sbkst.konzolR.Ui
             {
                 Cursor.RequestChange(new CursorPositionChange(0, 0, false));
             }
+      
+           
         }
 
         private void SetFocusTo(Controls.ConsoleControl ctrl)

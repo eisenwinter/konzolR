@@ -27,7 +27,7 @@ namespace sbkst.konzolR.Ui.Controls
                     {
                         _cursorPosition.X = (ushort)_currentSize.Clamp(0,this.Size.Width-1);
                         _cursorPosition.Y = 0;
-                        _cursorPosition.SetRelativeTo(this.Position.GetAbsolutePosition());
+                        _cursorPosition.SetRelativeTo(this.Position);
                     }
                 }
                 
@@ -38,10 +38,10 @@ namespace sbkst.konzolR.Ui.Controls
                 {
                     if (new string[] { "X", "Y" }.Any(a => a == e.PropertyName))
                     {
-                        _cursorPosition.SetRelativeTo(this.Position.GetAbsolutePosition());
+                        _cursorPosition.SetRelativeTo(this.Position);
                     }
                 };
-            }            
+            }
         }
 
         protected class StandardKeyArgs
@@ -104,19 +104,16 @@ namespace sbkst.konzolR.Ui.Controls
             protected set
             {
                 _cursorPosition = value;
-                _cursorPosition.SetRelativeTo(this.Position.GetAbsolutePosition());
+                _cursorPosition.SetRelativeTo(this.Position);
                 _cursorPosition.PropertyChanged += (object sender, PropertyChangedEventArgs e) =>
                 {
                     if (new string[] { "X", "Y" }.Any(a => a == e.PropertyName))
                     {
-                        _cursorPosition.SetRelativeTo(this.Position.GetAbsolutePosition());
+                        _cursorPosition.SetRelativeTo(this.Position);
                     }
                 };
             }
         }
-
-
-   
 
         public abstract bool KeyReceived(ControlKeyReceived controlKey);
     }

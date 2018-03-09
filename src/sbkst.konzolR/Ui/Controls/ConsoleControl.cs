@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using sbkst.konzolR.Ui.Rendering;
 using sbkst.konzolR.Ui.Utility;
 using sbkst.konzolR.Ui.Layout;
+using System.ComponentModel;
 namespace sbkst.konzolR.Ui.Controls
 {
     public abstract class ConsoleControl : IRenderable
@@ -32,7 +33,17 @@ namespace sbkst.konzolR.Ui.Controls
         public string Id { get; private set; }
         public Position Position { get; protected set; }
 
-        public Size Size { get; protected set; }
+
+        private Size _size;
+        public Size Size { get
+            {
+                return _size;
+            }
+            protected set
+            {
+                _size = value;
+            }
+        }
 
         public abstract IRenderProvider GetProvider();
 

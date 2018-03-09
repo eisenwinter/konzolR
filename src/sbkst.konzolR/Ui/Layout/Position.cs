@@ -23,6 +23,10 @@ namespace sbkst.konzolR.Ui.Layout
         {
             _x = position.X;
             _y = position.Y;
+            if(position.IsRelative && position._absolutePosition != null)
+            {
+                _absolutePosition = new Position(position._absolutePosition);
+            }
         }
 
         public Position(Position position, Position absolutePosition)
