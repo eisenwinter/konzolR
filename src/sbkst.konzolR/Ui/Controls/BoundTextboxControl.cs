@@ -13,31 +13,24 @@ namespace sbkst.konzolR.Ui.Controls
 {
     public class BoundTextboxControl<T> : ConsoleTextbox
     {
-        T _boundObject;
-        Func<T, string> _boundProperty;
+        readonly Func<T, string> _boundProperty;
         PropertyInfo _propertyInfo;
 
-        public T BoundObject
-        {
-            get
-            {
-                return _boundObject;
-            }
-        }
+        public T BoundObject { get; }
 
         public override string Value
         {
             get
             {
-                if (_boundObject != null)
+                if (BoundObject != null)
                 {
-                    return _boundProperty(_boundObject);
+                    return _boundProperty(BoundObject);
                 }
                 return null;
             }
             set
             {
-                _propertyInfo.SetValue(_boundObject, value, null);
+                _propertyInfo.SetValue(BoundObject, value, null);
                 if(value != null)
                 {
                     this._currentSize = Value.Length;
@@ -48,7 +41,7 @@ namespace sbkst.konzolR.Ui.Controls
 
         public BoundTextboxControl(string id, T obj, Expression<Func<T, string>> field) : base(id,"")
         {
-            _boundObject = obj;
+            BoundObject = obj;
             _boundProperty = field.Compile();
             MemberExpression body = (field.Body.NodeType == ExpressionType.Convert) ? (MemberExpression)((UnaryExpression)field.Body).Operand : (MemberExpression)field.Body;
             string propname = body.Member.Name;

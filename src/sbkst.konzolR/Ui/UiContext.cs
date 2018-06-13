@@ -123,7 +123,7 @@ namespace sbkst.konzolR.Ui
             _inputHandler.StartBlocking();
         }
 
-        public void UnhookInputlook()
+        public void UnhookInputloop()
         {
             _inputHandler.Stop();
 

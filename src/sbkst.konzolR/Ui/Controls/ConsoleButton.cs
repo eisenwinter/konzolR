@@ -11,7 +11,7 @@ namespace sbkst.konzolR.Ui.Controls
     public class ConsoleButton : ListeningConsoleControl
     {
 
-        private string _buttonText = string.Empty;
+        private readonly string _buttonText = string.Empty;
 
         public ConsoleButton(string id, string text, Action onClick) : base(id)
         {

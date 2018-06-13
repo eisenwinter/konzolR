@@ -11,25 +11,17 @@ namespace sbkst.konzolR.Ui.Controls
 {
     public class ConsoleSelectionList<T> : ListeningConsoleControl
     {
-        private int _yOffset = 0;
-        IEnumerable<SelectValue<T>> _selectValues;
-
-        private T _selectedItem;
-        public T SelectedItem
-        {
-            get
-            {
-                return _selectedItem;
-            }
-        }
+        private readonly int _yOffset = 0;
+        private IEnumerable<SelectValue<T>> _selectValues;
+        public T SelectedItem { get; private set; }
 
         private int IndexOfSelected
         {
             get
             {
-                if (_selectedItem != null)
+                if (SelectedItem != null)
                 {
-                    return _selectValues.Select(s => s.Data).ToList().IndexOf(_selectedItem);
+                    return _selectValues.Select(s => s.Data).ToList().IndexOf(SelectedItem);
                 }
                 return 0;
             }
@@ -46,19 +38,8 @@ namespace sbkst.konzolR.Ui.Controls
                 return new string[0];
             }
         }
+        public ConsoleColor BackgroundColor { get; set; } = ConsoleColor.White;
 
-        private ConsoleColor _backgroundColor = ConsoleColor.White;
-        public ConsoleColor BackgroundColor
-        {
-            get
-            {
-                return _backgroundColor;
-            }
-            set
-            {
-                _backgroundColor = value;
-            }
-        }
         public ConsoleSelectionList(string id, IEnumerable<SelectValue<T>> selectValues) : base(id)
         {
             _selectValues = selectValues;
@@ -66,18 +47,25 @@ namespace sbkst.konzolR.Ui.Controls
             this.CursorVisible = false;
             if (selectValues.NotNullAndAny())
             {
-                this._selectedItem = _selectValues.FirstOrDefault().Data;
+                this.SelectedItem = _selectValues.FirstOrDefault().Data;
             }
             else
             {
-                this._selectedItem = default(T);
+                this.SelectedItem = default(T);
             }
+         
+        }
+
+        public override void Focus()
+        {
+            base.Focus();
+            this.Valid = false;
         }
 
         public override IRenderProvider GetProvider()
         {
             //TODO: Viewbox INDEX
-            return new ConsoleSelectionRenderEngine(this, Viewbox, IndexOfSelected, _backgroundColor);
+            return new ConsoleSelectionRenderEngine(this, Viewbox, IndexOfSelected, BackgroundColor);
         }
 
         public override bool KeyReceived(ControlKeyReceived controlKey)
@@ -85,12 +73,12 @@ namespace sbkst.konzolR.Ui.Controls
             //TODO: Finish
             if (controlKey.Key == ConsoleKey.LeftArrow)
             {
-                this._selectedItem = _selectValues.Select(s => s.Data).Previous(_selectedItem, true);
+                this.SelectedItem = _selectValues.Select(s => s.Data).Previous(SelectedItem, true);
                 return true;
             }
-            if (controlKey.Key == ConsoleKey.RightArrow)
+            if (controlKey.Key == ConsoleKey.RightArrow || controlKey.Key == ConsoleKey.Spacebar)
             {
-                this._selectedItem = _selectValues.Select(s => s.Data).Next(_selectedItem, true);
+                this.SelectedItem = _selectValues.Select(s => s.Data).Next(SelectedItem, true);
                 return true;
             }
             return false;

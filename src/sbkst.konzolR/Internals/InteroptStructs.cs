@@ -43,11 +43,17 @@ namespace sbkst.konzolR.Internals
         public struct CHAR_INFO
         {
             [FieldOffset(0)]
+#pragma warning disable IDE0044 // Add readonly modifier
             char UnicodeChar;
+#pragma warning restore IDE0044 // Add readonly modifier
             [FieldOffset(0)]
+#pragma warning disable IDE0044 // Add readonly modifier
             char AsciiChar;
+#pragma warning restore IDE0044 // Add readonly modifier
             [FieldOffset(2)]
+#pragma warning disable IDE0044 // Add readonly modifier
             UInt16 Attributes;
+#pragma warning restore IDE0044 // Add readonly modifier
         }
 
         [StructLayout(LayoutKind.Sequential)]

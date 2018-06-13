@@ -9,7 +9,7 @@ namespace sbkst.konzolR.Ui.Rendering
     class ConsoleSelectionRenderEngine : RenderEngine
     {
         private ConsoleColor _bg;
-        private int _index = 0;
+        private readonly int _index = 0;
         private string[] _items;
    
         public ConsoleSelectionRenderEngine(IRenderable ctrl, string[] items,int focusedIndex, ConsoleColor backgroundColor = ConsoleColor.White) : base(ctrl)
@@ -18,25 +18,27 @@ namespace sbkst.konzolR.Ui.Rendering
             _index = focusedIndex;
             _items = items;
         }
-        
-
       
         public override Tuple<char, ushort> GetRelative(ushort x, ushort y)
         {
             CheckBounds(x, y);
             var bgToUse = (_index == y) ? _bg.Highlight().ColorToBackgroundDWORD() : _bg.ColorToBackgroundDWORD();
+        
             if (y < _items.Length)
             {
+                if (_index == y && x == (this._renderable.Size.Width - 1) && this._renderable is Controls.IFocusableControl)
+                {
+                    var focusable = this._renderable as Controls.IFocusableControl;
+                    if (focusable.HasFocus)
+                    {
+                        return new Tuple<char, ushort>('+', bgToUse);
+                    }
+
+                }
                 if (x < _items[y].Length)
                 {
-                    if(_index == y)
-                    {
-                        return new Tuple<char, ushort>(_items[y][x],bgToUse);
-                    }
-                    else
-                    {
-                        return new Tuple<char, ushort>(_items[y][x],bgToUse);
-                    }
+              
+                    return new Tuple<char, ushort>(_items[y][x], bgToUse);
                 }
             }
             return new Tuple<char, ushort>(' ', bgToUse);

@@ -9,9 +9,9 @@ namespace sbkst.konzolR.Ui.Rendering
     class ControlRenderEngine : RenderEngine
     {
         private ConsoleColor _bg = ConsoleColor.White;
-        private bool _hasFocus;
+        private readonly bool _hasFocus;
         private string _display;
-        private bool _centerText = false;
+        private readonly bool _centerText = false;
         public ControlRenderEngine(IRenderable ctrl, string display) : base(ctrl)
         {
             _display = display;

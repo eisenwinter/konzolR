@@ -107,20 +107,12 @@ namespace sbkst.konzolR.Ui
         //private ConsoleMenu _menu = null;
         //private ConsoleStatusStrip _statusStrip = null;
 
-        private CanvasTile[] _tiles;
+        private readonly CanvasTile[] _tiles;
         private Stack<Position> _invalidTiles = new Stack<Position>();
 
-        private Size _viewport;
+        public Size ViewPort { get; }
 
-        public Size ViewPort
-        {
-            get
-            {
-                return _viewport;
-            }
-        }
-
-        private IntPtr _screenBuffer;
+        private readonly IntPtr _screenBuffer;
 
         ConsoleColor _backgroundColor;
 
@@ -169,9 +161,9 @@ namespace sbkst.konzolR.Ui
             long ac = 0;
             sw.Start();
 #endif
-            for (short i = 0; i < _viewport.Width; i++)
+            for (short i = 0; i < ViewPort.Width; i++)
             {
-                for (short j = 0; j < _viewport.Height; j++)
+                for (short j = 0; j < ViewPort.Height; j++)
                 {
                     var tile = _tiles[Index((ushort)i, (ushort)j)];
                     var coord = new Internals.ConsoleInteropt.COORD
@@ -206,9 +198,9 @@ namespace sbkst.konzolR.Ui
 
         private void Rebuild()
         {
-            for (ushort i = 0; i < _viewport.Width; i++)
+            for (ushort i = 0; i < ViewPort.Width; i++)
             {
-                for (ushort j = 0; j < _viewport.Height; j++)
+                for (ushort j = 0; j < ViewPort.Height; j++)
                 {
                     _tiles[Index(i, j)] = GenerateTileAt(i, j);
                 }
@@ -238,7 +230,7 @@ namespace sbkst.konzolR.Ui
             System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 #endif
-            UpdateWithin(_viewport.Width, _viewport.Height, 0, 0);
+            UpdateWithin(ViewPort.Width, ViewPort.Height, 0, 0);
 #if DEBUG
             sw.Stop();
             System.Diagnostics.Trace.WriteLine(String.Format("Updating tiles array took {0} ms", sw.ElapsedMilliseconds));
@@ -282,7 +274,7 @@ namespace sbkst.konzolR.Ui
 
         public ConsoleCanvas(ushort width, ushort height)
         {
-            _viewport = new Size(width, height);
+            ViewPort = new Size(width, height);
             _tiles = new CanvasTile[(width * height)];
             _screenBuffer = ConsoleInteropt.CreateConsoleScreenBuffer(W32ConsoleConstants.GENERIC_WRITE, 0, IntPtr.Zero, W32ConsoleConstants.CONSOLE_TEXTMODE_BUFFER, IntPtr.Zero);
             if (_screenBuffer == IntPtr.Zero)
@@ -317,7 +309,7 @@ namespace sbkst.konzolR.Ui
 
         private ushort Index(ushort x, ushort y)
         {
-            return Convert.ToUInt16(x * _viewport.Height + y);
+            return Convert.ToUInt16(x * ViewPort.Height + y);
         }
 
         public ConsoleWindow RemoveWindow(string id)

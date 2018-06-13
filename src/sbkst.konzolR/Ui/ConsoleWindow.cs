@@ -46,9 +46,6 @@ namespace sbkst.konzolR.Ui
                 _padding = value;
             }
         }
-        private string _title;
-        private string _id;
-        private Size _size;
 
         private Position _rollbackPosition;
         private Size _rollbackSize;
@@ -157,7 +154,7 @@ namespace sbkst.konzolR.Ui
                 {
                     this._position.X = _rollbackPosition.X;
                     this._position.Y = _rollbackPosition.Y;
-                    this._size = new Size(_rollbackSize);
+                    this.Size = new Size(_rollbackSize);
                     this._rollbackPosition = null;
                     this._rollbackSize = null;
 
@@ -199,21 +196,9 @@ namespace sbkst.konzolR.Ui
         public delegate void RequestRedraw(IRenderable rectangle, bool fullRedraw = false);
         public event RequestRedraw OnRequestRedraw;
 
-        public String Id
-        {
-            get
-            {
-                return _id;
-            }
-        }
+        public String Id { get; }
 
-        public string Title
-        {
-            get
-            {
-                return _title;
-            }
-        }
+        public string Title { get; }
 
         public ConsoleColor BackgroundColor
         {
@@ -247,11 +232,7 @@ namespace sbkst.konzolR.Ui
             }
         }
 
-        public Size Size
-        {
-            get { return _size; }
-            set { _size = value; }
-        }
+        public Size Size { get; set; }
 
         private Position _position;
 
@@ -283,9 +264,9 @@ namespace sbkst.konzolR.Ui
 
         public ConsoleWindow(string title, string id, Size size, Position pos)
         {
-            _title = title;
-            _id = id;
-            this._size = size;
+            Title = title;
+            Id = id;
+            this.Size = size;
             this._position = pos;
         }
 
@@ -383,6 +364,7 @@ namespace sbkst.konzolR.Ui
             if (this.HasFocus)
             {
                 Cursor.RequestChange(new CursorPositionChange(x, y, (ctrl as Controls.IFocusableControl).CursorVisible));
+                OnRequestRedraw?.Invoke(ctrl);
             }
             if (!String.IsNullOrEmpty(_currentlyFocusedId))
             {

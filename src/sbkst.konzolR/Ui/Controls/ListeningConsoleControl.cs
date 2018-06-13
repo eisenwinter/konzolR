@@ -13,7 +13,6 @@ namespace sbkst.konzolR.Ui.Controls
 {
     public abstract class ListeningConsoleControl : FocusableConsoleControl, IListeningControl
     {
-        private Position _cursorPosition = new Position(0, 0);
         protected int _currentSize = 0;
 
         protected ListeningConsoleControl(string id) : base(id)
@@ -24,15 +23,15 @@ namespace sbkst.konzolR.Ui.Controls
                 {
                     if (this.HasFocus)
                     {
-                        _cursorPosition.X = (ushort)_currentSize.Clamp(0, this.Size.Width - 1);
-                        _cursorPosition.Y = 0;
+                        CursorPosition.X = (ushort)_currentSize.Clamp(0, this.Size.Width - 1);
+                        CursorPosition.Y = 0;
                     }
                 }
 
             };
-            if (_cursorPosition != null)
+            if (CursorPosition != null)
             {
-                _cursorPosition.SetRelativeTo(this.Position);
+                CursorPosition.SetRelativeTo(this.Position);
             }
         }
 
@@ -95,18 +94,7 @@ namespace sbkst.konzolR.Ui.Controls
             return false;
         }
 
-        public Position CursorPosition
-        {
-            get
-            {
-                return _cursorPosition;
-            }
-            protected set
-            {
-                _cursorPosition = value;
-               
-            }
-        }
+        public Position CursorPosition { get; protected set; } = new Position(0, 0);
 
         public abstract bool KeyReceived(ControlKeyReceived controlKey);
     }

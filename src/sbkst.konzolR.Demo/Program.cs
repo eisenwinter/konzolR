@@ -34,7 +34,7 @@ namespace sbkst.konzolR.Demo
                 });
                 test.Keys.On(ConsoleKey.Q, ConsoleModifiers.Control, (ctx) =>
                  {
-                     ctx.UnhookInputlook();
+                     ctx.UnhookInputloop();
                      return true;
                  });
 

@@ -9,7 +9,7 @@ namespace sbkst.konzolR.Ui.Controls
 {
     public class ConsoleLabel : ConsoleControl
     {
-        private string _value;
+        private readonly string _value;
         public ConsoleLabel(string id, string text, ConsoleColor backgroundColor = ConsoleColor.White) : base(id)
         {
             this._value = text;

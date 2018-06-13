@@ -13,27 +13,16 @@ namespace sbkst.konzolR.Ui.Controls
         {
 
         }
+        public string Value { get; set; } = string.Empty;
 
-        private string _value = string.Empty;
-        public string Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                _value = value;
-            }
-        }
         public InfotextControl(string id, string initialText) : base(id)
         {
-            _value = initialText;
+            Value = initialText;
         }
 
         public override IRenderProvider GetProvider()
         {
-            return new ControlRenderEngine(this, _value);
+            return new ControlRenderEngine(this, Value);
         }
     }
 }

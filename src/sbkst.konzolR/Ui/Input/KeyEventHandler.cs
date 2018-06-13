@@ -10,7 +10,7 @@ namespace sbkst.konzolR.Ui.Input
     class KeyEventHandler<T> : IKeyEventHandler<T> where T : class
     {
         ConcurrentDictionary<string, Func<T, bool>> _keyActions = new ConcurrentDictionary<string, Func<T, bool>>();
-        Lazy<Regex> _keyDefinition = new Lazy<Regex>(() => new Regex("(?<flag>[(a|f)])-(?<key>[A-z0-9]{1,})-(?<mod>none|Alt|Shift|Control)",RegexOptions.Compiled),true);
+        readonly Lazy<Regex> _keyDefinition = new Lazy<Regex>(() => new Regex("(?<flag>[(a|f)])-(?<key>[A-z0-9]{1,})-(?<mod>none|Alt|Shift|Control)",RegexOptions.Compiled),true);
 
         private void Register(string key, Func<T, bool> exec)
         {
